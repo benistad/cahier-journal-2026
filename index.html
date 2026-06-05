@@ -135,6 +135,15 @@
     .act-content .act-item::before {
       content: "–"; color: #c0c8d8; flex-shrink: 0; font-size: .8rem;
     }
+    /* Bloc de détail (liste de mots, contenu d'exercice) */
+    .act-content .act-detail {
+      background: #f7f8fc;
+      border-left: 3px solid #d0d8ef;
+      border-radius: 0 5px 5px 0;
+      padding: 4px 10px;
+      margin: 3px 0 4px 14px;
+      font-size: .82rem; color: #555; line-height: 1.65;
+    }
     /* Liens de documents dans un bloc */
     .act-content .act-docs {
       display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px;
@@ -567,8 +576,11 @@ function parseContent(text) {
     const clean = line.replace(/^[-–]\s*/, '');
     const isBullet = /^[-–]/.test(line);
 
+    // Lines starting with >> → detail block (lists of words, exercise content)
+    if (line.startsWith('>>')) {
+      html += `<div class="act-detail">${renderLinks(line.slice(2).trim())}</div>`;
     // Line ending with ':' and not a bullet → section header
-    if (!isBullet && clean.endsWith(':')) {
+    } else if (!isBullet && clean.endsWith(':')) {
       html += `<span class="act-intro">${renderLinks(clean)}</span>`;
     } else if (isBullet || lines.length > 1) {
       html += `<div class="act-item">${renderLinks(clean)}</div>`;
