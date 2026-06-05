@@ -20,7 +20,19 @@
           "type": "subject",
           "tag": "Conjugaison",
           "content": "- Découverte puis copie de la leçon [CO.08 – Le passé simple](docs/CO08-passe-simple.html) (verbes du 1er groupe)"
-        }
+        },
+        { "type": "break", "label": "RECREATION" },
+        {
+          "type": "subject",
+          "tag": "Conjugaison",
+          "content": "Exercices d'application sur le passé simple :\n- Recopie uniquement les verbes conjugués au passé simple : il mangea – elles jouèrent – je mange – elle remue – ils passèrent – elles pensent – ils montèrent – vous menâtes – vous donnâtes – tu regardes – je liai – elles nagèrent – nous levâmes – tu achetas\n- Complète ces verbes au passé simple avec la terminaison qui convient : il remplaç… / tu diminu… / elles se balanc… / je souffl… / vous discut… / nous termin… / on s'envol… / on oubli… / vous salu… / nous march…"
+        },
+        {
+          "type": "subject",
+          "tag": "Numération",
+          "content": "- Exercice n°2 p.30 et exercice n°8 p.31 puis correction collective"
+        },
+        { "type": "break", "label": "CANTINE" }
       ],
       "attachments": [
         {
