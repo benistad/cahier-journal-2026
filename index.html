@@ -119,11 +119,33 @@
       padding: 3px 9px; border-radius: 5px; white-space: nowrap;
       flex-shrink: 0; margin-top: 2px;
     }
-    .act-content { flex: 1; font-size: .88rem; line-height: 1.65; }
-    .act-content ul { list-style: none; }
-    .act-content ul li::before { content: "– "; color: #aaa; }
+    .act-content { flex: 1; font-size: .88rem; line-height: 1.6; }
     .act-content a { color: var(--link-col); text-decoration: none; }
     .act-content a:hover { text-decoration: underline; }
+    /* Titre intro d'une activité (ligne se terminant par :) */
+    .act-content .act-intro {
+      font-weight: 600; color: #444; font-size: .85rem;
+      margin-bottom: 5px; display: block;
+    }
+    /* Item de liste */
+    .act-content .act-item {
+      display: flex; gap: 6px; align-items: baseline;
+      margin: 3px 0; font-size: .87rem; line-height: 1.55;
+    }
+    .act-content .act-item::before {
+      content: "–"; color: #c0c8d8; flex-shrink: 0; font-size: .8rem;
+    }
+    /* Liens de documents dans un bloc */
+    .act-content .act-docs {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px;
+    }
+    .act-content .act-docs a {
+      background: #f0f4ff; border: 1px solid #c7d5f5;
+      border-radius: 5px; padding: 2px 9px;
+      font-size: .78rem; font-weight: 600; color: var(--accent);
+      white-space: nowrap;
+    }
+    .act-content .act-docs a:hover { background: #dde8ff; text-decoration: none; }
     .act-edit-hint { font-size: .7rem; color: #bbb; margin-left: auto; flex-shrink: 0; display: none; align-self: center; }
     body.edit-mode .act-edit-hint { display: block; }
 
@@ -496,11 +518,66 @@ function getDayData(day, key = weekKey()) {
 ═══════════════════════════════════════ */
 function parseContent(text) {
   if (!text || !text.trim()) return '';
-  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-  const render = t => t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) =>
+
+  const LINK_RE = /\[([^\]]+)\]\(([^)]+)\)/g;
+  const renderLinks = t => t.replace(LINK_RE, (_, label, url) =>
     `<a href="${url}" target="_blank" rel="noopener">${label}</a>`);
-  if (lines.length === 1) return `<span>${render(lines[0].replace(/^[-–]\s*/, ''))}</span>`;
-  return '<ul>' + lines.map(l => `<li>${render(l.replace(/^[-–]\s*/, ''))}</li>`).join('') + '</ul>';
+
+  // Detect if a line is ONLY links (docs line)
+  const isDocsLine = t => {
+    const stripped = t.replace(LINK_RE, '').replace(/[·\s]/g, '');
+    return stripped === '' && LINK_RE.test(t.replace(LINK_RE, '').replace(/[\s·]/g,'') === '' ? t : '');
+  };
+  const onlyLinks = t => {
+    const stripped = t.replace(/^[-–]\s*/, ''); // strip leading dash
+    const noLinks = stripped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '').replace(/[·\s]/g,'');
+    return noLinks === '' && /\[/.test(stripped);
+  };
+
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+  // Single plain line
+  if (lines.length === 1 && !onlyLinks(lines[0])) {
+    return `<span>${renderLinks(lines[0].replace(/^[-–]\s*/, ''))}</span>`;
+  }
+
+  let html = '';
+  let docsBuffer = [];
+
+  const flushDocs = () => {
+    if (!docsBuffer.length) return;
+    html += `<div class="act-docs">${docsBuffer.join('')}</div>`;
+    docsBuffer = [];
+  };
+
+  lines.forEach(line => {
+    // Lines that are only markdown links → render as doc chips
+    if (onlyLinks(line)) {
+      flushDocs(); // flush previous if any
+      const chips = [];
+      let m; const re = /\[([^\]]+)\]\(([^)]+)\)/g;
+      while ((m = re.exec(line)) !== null) {
+        chips.push(`<a href="${m[2]}" target="_blank" rel="noopener">${m[1]}</a>`);
+      }
+      html += `<div class="act-docs">${chips.join('')}</div>`;
+      return;
+    }
+
+    flushDocs();
+    const clean = line.replace(/^[-–]\s*/, '');
+    const isBullet = /^[-–]/.test(line);
+
+    // Line ending with ':' and not a bullet → section header
+    if (!isBullet && clean.endsWith(':')) {
+      html += `<span class="act-intro">${renderLinks(clean)}</span>`;
+    } else if (isBullet || lines.length > 1) {
+      html += `<div class="act-item">${renderLinks(clean)}</div>`;
+    } else {
+      html += `<span>${renderLinks(clean)}</span>`;
+    }
+  });
+  flushDocs();
+  return html;
 }
 
 function fileIcon(name = '') {
