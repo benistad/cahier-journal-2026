@@ -41,7 +41,7 @@
         {
           "type": "subject",
           "tag": "Histoire",
-          "content": "- Séance 2 : Collaborer, résister, subir (1ère partie)"
+          "content": "- Séance 2 : Collaborer, résister, subir (1ère partie)\n- [Diaporama](docs/S2_Collaborer_Resister_Subir.pptx) · [Fiche élèves](docs/S2_Fiche_Eleves.docx) · [Fiche enseignant](docs/S2_Fiche_Seance_Enseignant.docx)"
         },
         { "type": "break", "label": "RECREATION" },
         {
@@ -55,21 +55,6 @@
           "name": "CO.08 – Le passé simple",
           "url": "docs/CO08-passe-simple.html",
           "size": "Leçon"
-        },
-        {
-          "name": "Séance 2 – Diaporama",
-          "url": "docs/S2_Collaborer_Resister_Subir.pptx",
-          "size": "742 Ko"
-        },
-        {
-          "name": "Séance 2 – Fiche élèves",
-          "url": "docs/S2_Fiche_Eleves.docx",
-          "size": "451 Ko"
-        },
-        {
-          "name": "Séance 2 – Fiche enseignant",
-          "url": "docs/S2_Fiche_Seance_Enseignant.docx",
-          "size": "22 Ko"
         }
       ]
     }
