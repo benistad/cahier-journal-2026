@@ -48,7 +48,13 @@
           "type": "subject",
           "tag": "Histoire",
           "content": "- Séance 2 : Collaborer, résister, subir (suite)"
-        }
+        },
+        {
+          "type": "subject",
+          "tag": "Arts visuels",
+          "content": "- Fin de la séance – L'objet mémoire de la Seconde Guerre mondiale\n- [Diaporama](docs/Arts_visuels_objet_memoire.pptx)"
+        },
+        { "type": "break", "label": "FIN DE JOURNÉE" }
       ],
       "attachments": [
         {
