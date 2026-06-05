@@ -19,10 +19,16 @@
         {
           "type": "subject",
           "tag": "Conjugaison",
-          "content": "- Découverte puis copie de la leçon CO.09 – Le passé simple (verbes du 1er groupe)"
+          "content": "- Découverte puis copie de la leçon [CO.08 – Le passé simple](docs/CO08-passe-simple.html) (verbes du 1er groupe)"
         }
       ],
-      "attachments": []
+      "attachments": [
+        {
+          "name": "CO.08 – Le passé simple",
+          "url": "docs/CO08-passe-simple.html",
+          "size": "Leçon HTML"
+        }
+      ]
     }
   }
 }
