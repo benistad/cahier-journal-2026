@@ -1,1 +1,28 @@
-{}
+{
+  "2026-06-01": {
+    "Lundi":    { "blocks": [], "attachments": [] },
+    "Mardi":    { "blocks": [], "attachments": [] },
+    "Mercredi": { "blocks": [], "attachments": [] },
+    "Jeudi":    { "blocks": [], "attachments": [] },
+    "Vendredi": {
+      "blocks": [
+        {
+          "type": "subject",
+          "tag": "Rituels",
+          "content": "- Un exercice sur le passé simple\n- Finir la fiche problème – correction collective"
+        },
+        {
+          "type": "subject",
+          "tag": "Dictée",
+          "content": "Dictée finale"
+        },
+        {
+          "type": "subject",
+          "tag": "Conjugaison",
+          "content": "- Découverte puis copie de la leçon CO.09 – Le passé simple (verbes du 1er groupe)"
+        }
+      ],
+      "attachments": []
+    }
+  }
+}
