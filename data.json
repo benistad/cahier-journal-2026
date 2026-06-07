@@ -64,5 +64,266 @@
         }
       ]
     }
+  },
+  "2026-06-08": {
+    "Lundi": {
+      "blocks": [
+        {
+          "type": "subject",
+          "tag": "Rituels",
+          "content": "- Accueil / Liaison / Appel / Copie des devoirs\n- Rituel numération : tableau des nombres\n- Rituel date / EMC / Langage oral\n- Anglais re-brassage"
+        },
+        {
+          "type": "subject",
+          "tag": "Etude du code",
+          "content": "Son 32 [ouil / ail] :\n- Relecture de la fiche 32 en binôme\n- Exercice phono n°1"
+        },
+        {
+          "type": "subject",
+          "tag": "Dictée",
+          "content": "Liste 30 – /16pts\n>> Je ferme le portail pour que la volaille ne mange pas les grenouilles."
+        },
+        {
+          "type": "subject",
+          "tag": "Calcul Mental",
+          "content": "Révisions table de 10 et de 3"
+        },
+        {
+          "type": "subject",
+          "tag": "Numération",
+          "content": "Fiche de révisions :\n- Dictée de nombres\n- Écriture en chiffres\n- Écriture en lettres\n- Suite de nombres\n- Comparaison\n- Décomposition multiplicative"
+        },
+        {
+          "type": "subject",
+          "tag": "Mesures",
+          "content": "Les heures – Séance 5\n- Vidéo maître Lucas sur les heures + fiche exercice"
+        },
+        { "type": "break", "label": "RECREATION" },
+        {
+          "type": "subject",
+          "tag": "Calcul",
+          "content": "Résolution de problème – Problème de partage\n- Résoudre des problèmes additifs ou soustractifs en utilisant des procédures de calcul adaptées"
+        },
+        {
+          "type": "subject",
+          "tag": "Maîtrise du geste",
+          "content": "Copie transcription + frise à la règle (cahier de brouillon)\n- Écrire lisiblement en écriture cursive\n- Respecter les liaisons entre les lettres"
+        },
+        {
+          "type": "subject",
+          "tag": "Poésie",
+          "content": "La cigale et la fourmi – Copier le titre + partie 1"
+        },
+        {
+          "type": "subject",
+          "tag": "Conjugaison",
+          "content": "Le futur des verbes du 1er groupe :\n- Conjuguer le verbe être + verbe BRILLER"
+        },
+        { "type": "break", "label": "PAUSE MERIDIENNE" },
+        {
+          "type": "subject",
+          "tag": "Sciences",
+          "content": "Questionner le monde – L'alimentation\n- Séance 12 : Comprendre les relations entre les êtres vivants et leur milieu"
+        },
+        {
+          "type": "subject",
+          "tag": "Production d'écrit",
+          "content": "Écris 3 phrases avec les mots de la liste 30\n- Produire un écrit court en respectant une consigne et l'organisation de la phrase"
+        },
+        {
+          "type": "subject",
+          "tag": "Sciences",
+          "content": "Questionner le monde – L'alimentation\n- Séance 13 : Comprendre les relations entre les êtres vivants et leur milieu"
+        },
+        {
+          "type": "subject",
+          "tag": "EPS",
+          "content": "Education Physique et Sportive"
+        },
+        { "type": "break", "label": "RECREATION" },
+        {
+          "type": "subject",
+          "tag": "Arts visuels",
+          "content": "Pixel art\n- Produire une réalisation artistique"
+        },
+        {
+          "type": "subject",
+          "tag": "Méthodologie",
+          "content": "Méthodologie"
+        },
+        { "type": "break", "label": "FIN DE JOURNÉE" }
+      ],
+      "attachments": []
+    },
+    "Mardi": {
+      "blocks": [
+        {
+          "type": "subject",
+          "tag": "Rituels",
+          "content": "- Accueil / Liaison / Appel / Copie des devoirs\n- Calculs posés (additions / soustractions)\n- Rituel date / EMC / Compréhension orale\n- Anglais re-brassage"
+        },
+        {
+          "type": "subject",
+          "tag": "Maîtrise du geste",
+          "content": "Copie transcription + frise à la règle (cahier du jour)\n- Écrire lisiblement en écriture cursive\n- Respecter les liaisons entre les lettres"
+        },
+        {
+          "type": "subject",
+          "tag": "Dictée",
+          "content": "Liste 30 – /16pts\n>> Près de la mare, le brouillard cache les grenouilles qui coassent."
+        },
+        {
+          "type": "subject",
+          "tag": "Etude du code",
+          "content": "Son 33 [ail / ouil] – Exercices n°2 et 3\n- Identifier les relations entre les lettres et les sons et lire des mots contenant le graphème étudié"
+        },
+        {
+          "type": "subject",
+          "tag": "Calcul Mental",
+          "content": "Révisions table de 10 et de 3"
+        },
+        {
+          "type": "subject",
+          "tag": "Mesures",
+          "content": "Les heures – Séance 5\n- Vidéo maître Lucas sur les heures + fiche exercice"
+        },
+        { "type": "break", "label": "RECREATION" },
+        {
+          "type": "subject",
+          "tag": "Calcul",
+          "content": "Résolution de problème – Problème de partage\n- Résoudre des problèmes additifs ou soustractifs en utilisant des procédures de calcul adaptées"
+        },
+        {
+          "type": "subject",
+          "tag": "Conjugaison",
+          "content": "Le futur des verbes du 1er groupe :\n- Verbe avoir : découverte\n- Leçon C3"
+        },
+        {
+          "type": "subject",
+          "tag": "Lecture",
+          "content": "Le prince de Motordu\n- Lecture de la page 1 + questionnaire"
+        },
+        { "type": "break", "label": "PAUSE MERIDIENNE" },
+        {
+          "type": "subject",
+          "tag": "Poésie",
+          "content": "La cigale et la fourmi – Copier la partie 2"
+        },
+        {
+          "type": "subject",
+          "tag": "Sciences",
+          "content": "Questionner le monde – L'alimentation\n- Séance 13 : Comprendre les relations entre les êtres vivants et leur milieu"
+        },
+        {
+          "type": "subject",
+          "tag": "APQ",
+          "content": "Permettre aux élèves de bouger régulièrement pour favoriser l'attention et le bien-être\n- Réaliser une activité physique pour entretenir sa santé"
+        },
+        { "type": "break", "label": "RECREATION" },
+        {
+          "type": "subject",
+          "tag": "Vocabulaire",
+          "content": "Le dictionnaire – Séance 5\n- Retrouver 4 mots dans le dictionnaire"
+        },
+        {
+          "type": "subject",
+          "tag": "Méthodologie",
+          "content": "Méthodologie\n- Fichier jeux « Prince de Motordu » pour l'autonomie\n- 1 coloriage dans leur pochette verte"
+        },
+        { "type": "break", "label": "FIN DE JOURNÉE" }
+      ],
+      "attachments": []
+    },
+    "Mercredi": { "blocks": [], "attachments": [] },
+    "Jeudi": {
+      "blocks": [
+        {
+          "type": "subject",
+          "tag": "Rituels",
+          "content": "- Accueil / Liaison / Appel / Copie des devoirs\n- Rituel mesure : cm et mm\n- Trace des segments\n- Rituel date / EMC / Langage oral\n- Copie liste 31"
+        },
+        {
+          "type": "subject",
+          "tag": "Calcul Mental",
+          "content": "Révisions table de 10 et de 3"
+        },
+        {
+          "type": "subject",
+          "tag": "Dictée",
+          "content": "Liste 30 – /26pts\n>> Tu répares le portail. Les volailles se cachent dans le brouillard. Une grenouille coasse dans la mare."
+        },
+        {
+          "type": "subject",
+          "tag": "Etude du code",
+          "content": "Son 32 [ail / ouil] – Exercices n°4\n- Identifier les relations entre les lettres et les sons et lire des mots contenant le graphème étudié"
+        },
+        {
+          "type": "subject",
+          "tag": "Géométrie",
+          "content": "Tracer des carrés et des rectangles – Séance 1\n- Regarder vidéo de maître Lucas : construire un carré et construire un rectangle"
+        },
+        {
+          "type": "subject",
+          "tag": "Poésie",
+          "content": "La cigale et la fourmi – Copier la partie 3 + auteur"
+        },
+        { "type": "break", "label": "RECREATION" },
+        {
+          "type": "subject",
+          "tag": "Calcul",
+          "content": "Résolution de problème – Problème de partage (2 problèmes)\n- Résoudre des problèmes additifs ou soustractifs en utilisant des procédures de calcul adaptées"
+        },
+        {
+          "type": "subject",
+          "tag": "Mesures",
+          "content": "Les heures – Séance 6\n- Fiche exercice"
+        },
+        {
+          "type": "subject",
+          "tag": "Conjugaison",
+          "content": "Le futur des verbes être et avoir"
+        },
+        { "type": "break", "label": "PAUSE MERIDIENNE" },
+        {
+          "type": "subject",
+          "tag": "EPS",
+          "content": "Education Physique et Sportive"
+        },
+        {
+          "type": "subject",
+          "tag": "Production d'écrit",
+          "content": "Jogging d'écriture 4 :\n>> Quel est ton meilleur souvenir de vacances ?\n- Produire un écrit court en respectant une consigne et l'organisation de la phrase"
+        },
+        {
+          "type": "subject",
+          "tag": "Lecture",
+          "content": "Le prince de Motordu\n- Lecture de la page 1 + suite questionnaire"
+        },
+        { "type": "break", "label": "RECREATION" },
+        {
+          "type": "subject",
+          "tag": "Vocabulaire",
+          "content": "Le dictionnaire – Séance 6\n- Retrouver 4 mots dans le dictionnaire"
+        },
+        {
+          "type": "subject",
+          "tag": "Méthodologie",
+          "content": "Méthodologie"
+        },
+        { "type": "break", "label": "FIN DE JOURNÉE" }
+      ],
+      "attachments": []
+    },
+    "Vendredi": {
+      "blocks": [
+        {
+          "type": "subject",
+          "tag": "Sortie",
+          "content": "Sortie Péniche – journée complète"
+        },
+        { "type": "break", "label": "FIN DE JOURNÉE" }
+      ],
+      "attachments": []
+    }
   }
 }
