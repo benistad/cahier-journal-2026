@@ -71,84 +71,106 @@
         {
           "type": "subject",
           "tag": "Rituels",
+          "time": "8h30 – 9h00",
           "content": "- Accueil / Liaison / Appel / Copie des devoirs\n- Rituel numération : tableau des nombres\n- Rituel date / EMC / Langage oral\n- Anglais re-brassage"
         },
         {
           "type": "subject",
           "tag": "Etude du code",
+          "time": "9h00 – 9h15",
           "content": "Son 32 [ouil / ail] :\n- Relecture de la fiche 32 en binôme\n- Exercice phono n°1"
         },
         {
           "type": "subject",
           "tag": "Dictée",
+          "time": "9h15 – 9h30",
           "content": "Liste 30 – /16pts\n>> Je ferme le portail pour que la volaille ne mange pas les grenouilles."
         },
         {
           "type": "subject",
           "tag": "Calcul Mental",
+          "time": "9h30 – 9h45",
           "content": "Révisions table de 10 et de 3"
         },
         {
           "type": "subject",
           "tag": "Numération",
+          "time": "9h45 – 10h00",
           "content": "Fiche de révisions :\n- Dictée de nombres\n- Écriture en chiffres\n- Écriture en lettres\n- Suite de nombres\n- Comparaison\n- Décomposition multiplicative"
         },
         {
           "type": "subject",
           "tag": "Mesures",
+          "time": "10h00 – 10h20",
           "content": "Les heures – Séance 5\n- Vidéo maître Lucas sur les heures + fiche exercice"
         },
         { "type": "break", "label": "RECREATION" },
         {
           "type": "subject",
           "tag": "Calcul",
+          "time": "10h40 – 11h00",
           "content": "Résolution de problème – Problème de partage\n- Résoudre des problèmes additifs ou soustractifs en utilisant des procédures de calcul adaptées"
         },
         {
           "type": "subject",
           "tag": "Maîtrise du geste",
+          "time": "11h00 – 11h15",
           "content": "Copie transcription + frise à la règle (cahier de brouillon)\n- Écrire lisiblement en écriture cursive\n- Respecter les liaisons entre les lettres"
         },
         {
           "type": "subject",
           "tag": "Poésie",
+          "time": "11h15 – 11h30",
           "content": "La cigale et la fourmi – Copier le titre + partie 1"
         },
         {
           "type": "subject",
           "tag": "Conjugaison",
+          "time": "11h30 – 11h45",
           "content": "Le futur des verbes du 1er groupe :\n- Conjuguer le verbe être + verbe BRILLER"
+        },
+        {
+          "type": "subject",
+          "tag": "APQ",
+          "time": "11h45 – 12h30",
+          "content": "A.P.C."
         },
         { "type": "break", "label": "PAUSE MERIDIENNE" },
         {
           "type": "subject",
           "tag": "Sciences",
+          "time": "14h00 – 14h20",
           "content": "Questionner le monde – L'alimentation\n- Séance 12 : Comprendre les relations entre les êtres vivants et leur milieu"
         },
         {
           "type": "subject",
           "tag": "Production d'écrit",
+          "time": "14h20 – 14h30",
           "content": "Écris 3 phrases avec les mots de la liste 30\n- Produire un écrit court en respectant une consigne et l'organisation de la phrase"
         },
         {
           "type": "subject",
           "tag": "Sciences",
+          "time": "14h30 – 14h45",
           "content": "Questionner le monde – L'alimentation\n- Séance 13 : Comprendre les relations entre les êtres vivants et leur milieu"
         },
         {
           "type": "subject",
           "tag": "EPS",
+          "time": "15h00 – 15h20",
           "content": "Education Physique et Sportive"
         },
         { "type": "break", "label": "RECREATION" },
         {
           "type": "subject",
           "tag": "Arts visuels",
+          "time": "15h50 – 16h10",
           "content": "Pixel art\n- Produire une réalisation artistique"
         },
         {
           "type": "subject",
           "tag": "Méthodologie",
+          "time": "16h30 – 16h45",
           "content": "Méthodologie"
         },
         { "type": "break", "label": "FIN DE JOURNÉE" }
@@ -160,74 +182,88 @@
         {
           "type": "subject",
           "tag": "Rituels",
+          "time": "8h30 – 9h00",
           "content": "- Accueil / Liaison / Appel / Copie des devoirs\n- Calculs posés (additions / soustractions)\n- Rituel date / EMC / Compréhension orale\n- Anglais re-brassage"
         },
         {
           "type": "subject",
           "tag": "Maîtrise du geste",
+          "time": "9h00 – 9h15",
           "content": "Copie transcription + frise à la règle (cahier du jour)\n- Écrire lisiblement en écriture cursive\n- Respecter les liaisons entre les lettres"
         },
         {
           "type": "subject",
           "tag": "Dictée",
+          "time": "9h15 – 9h30",
           "content": "Liste 30 – /16pts\n>> Près de la mare, le brouillard cache les grenouilles qui coassent."
         },
         {
           "type": "subject",
           "tag": "Etude du code",
+          "time": "9h30 – 9h45",
           "content": "Son 33 [ail / ouil] – Exercices n°2 et 3\n- Identifier les relations entre les lettres et les sons et lire des mots contenant le graphème étudié"
         },
         {
           "type": "subject",
           "tag": "Calcul Mental",
+          "time": "9h45 – 10h00",
           "content": "Révisions table de 10 et de 3"
         },
         {
           "type": "subject",
           "tag": "Mesures",
+          "time": "10h00 – 10h20",
           "content": "Les heures – Séance 5\n- Vidéo maître Lucas sur les heures + fiche exercice"
         },
         { "type": "break", "label": "RECREATION" },
         {
           "type": "subject",
           "tag": "Calcul",
+          "time": "10h40 – 11h00",
           "content": "Résolution de problème – Problème de partage\n- Résoudre des problèmes additifs ou soustractifs en utilisant des procédures de calcul adaptées"
         },
         {
           "type": "subject",
           "tag": "Conjugaison",
+          "time": "11h00 – 11h30",
           "content": "Le futur des verbes du 1er groupe :\n- Verbe avoir : découverte\n- Leçon C3"
         },
         {
           "type": "subject",
           "tag": "Lecture",
+          "time": "11h15 – 11h45",
           "content": "Le prince de Motordu\n- Lecture de la page 1 + questionnaire"
         },
         { "type": "break", "label": "PAUSE MERIDIENNE" },
         {
           "type": "subject",
           "tag": "Poésie",
+          "time": "14h00 – 14h20",
           "content": "La cigale et la fourmi – Copier la partie 2"
         },
         {
           "type": "subject",
           "tag": "Sciences",
+          "time": "14h30 – 14h45",
           "content": "Questionner le monde – L'alimentation\n- Séance 13 : Comprendre les relations entre les êtres vivants et leur milieu"
         },
         {
           "type": "subject",
           "tag": "APQ",
+          "time": "15h00 – 15h30",
           "content": "Permettre aux élèves de bouger régulièrement pour favoriser l'attention et le bien-être\n- Réaliser une activité physique pour entretenir sa santé"
         },
         { "type": "break", "label": "RECREATION" },
         {
           "type": "subject",
           "tag": "Vocabulaire",
+          "time": "15h50 – 16h10",
           "content": "Le dictionnaire – Séance 5\n- Retrouver 4 mots dans le dictionnaire"
         },
         {
           "type": "subject",
           "tag": "Méthodologie",
+          "time": "16h30 – 16h45",
           "content": "Méthodologie\n- Fichier jeux « Prince de Motordu » pour l'autonomie\n- 1 coloriage dans leur pochette verte"
         },
         { "type": "break", "label": "FIN DE JOURNÉE" }
@@ -240,74 +276,94 @@
         {
           "type": "subject",
           "tag": "Rituels",
+          "time": "8h30 – 9h00",
           "content": "- Accueil / Liaison / Appel / Copie des devoirs\n- Rituel mesure : cm et mm\n- Trace des segments\n- Rituel date / EMC / Langage oral\n- Copie liste 31"
         },
         {
           "type": "subject",
           "tag": "Calcul Mental",
+          "time": "9h00 – 9h15",
           "content": "Révisions table de 10 et de 3"
         },
         {
           "type": "subject",
           "tag": "Dictée",
+          "time": "9h15 – 9h30",
           "content": "Liste 30 – /26pts\n>> Tu répares le portail. Les volailles se cachent dans le brouillard. Une grenouille coasse dans la mare."
         },
         {
           "type": "subject",
           "tag": "Etude du code",
+          "time": "9h30 – 9h45",
           "content": "Son 32 [ail / ouil] – Exercices n°4\n- Identifier les relations entre les lettres et les sons et lire des mots contenant le graphème étudié"
         },
         {
           "type": "subject",
           "tag": "Géométrie",
+          "time": "9h45 – 10h00",
           "content": "Tracer des carrés et des rectangles – Séance 1\n- Regarder vidéo de maître Lucas : construire un carré et construire un rectangle"
         },
         {
           "type": "subject",
           "tag": "Poésie",
+          "time": "10h00 – 10h20",
           "content": "La cigale et la fourmi – Copier la partie 3 + auteur"
         },
         { "type": "break", "label": "RECREATION" },
         {
           "type": "subject",
           "tag": "Calcul",
+          "time": "10h40 – 11h00",
           "content": "Résolution de problème – Problème de partage (2 problèmes)\n- Résoudre des problèmes additifs ou soustractifs en utilisant des procédures de calcul adaptées"
         },
         {
           "type": "subject",
           "tag": "Mesures",
+          "time": "11h00 – 11h15",
           "content": "Les heures – Séance 6\n- Fiche exercice"
         },
         {
           "type": "subject",
           "tag": "Conjugaison",
+          "time": "11h15 – 11h45",
           "content": "Le futur des verbes être et avoir"
+        },
+        {
+          "type": "subject",
+          "tag": "APQ",
+          "time": "11h45 – 12h30",
+          "content": "A.P.C."
         },
         { "type": "break", "label": "PAUSE MERIDIENNE" },
         {
           "type": "subject",
           "tag": "EPS",
+          "time": "14h00 – 14h20",
           "content": "Education Physique et Sportive"
         },
         {
           "type": "subject",
           "tag": "Production d'écrit",
+          "time": "14h20 – 14h45",
           "content": "Jogging d'écriture 4 :\n>> Quel est ton meilleur souvenir de vacances ?\n- Produire un écrit court en respectant une consigne et l'organisation de la phrase"
         },
         {
           "type": "subject",
           "tag": "Lecture",
+          "time": "15h00 – 15h20",
           "content": "Le prince de Motordu\n- Lecture de la page 1 + suite questionnaire"
         },
         { "type": "break", "label": "RECREATION" },
         {
           "type": "subject",
           "tag": "Vocabulaire",
+          "time": "15h50 – 16h10",
           "content": "Le dictionnaire – Séance 6\n- Retrouver 4 mots dans le dictionnaire"
         },
         {
           "type": "subject",
           "tag": "Méthodologie",
+          "time": "16h30 – 16h45",
           "content": "Méthodologie"
         },
         { "type": "break", "label": "FIN DE JOURNÉE" }
@@ -319,6 +375,7 @@
         {
           "type": "subject",
           "tag": "Sortie",
+          "time": "8h30 – 16h45",
           "content": "Sortie Péniche – journée complète"
         },
         { "type": "break", "label": "FIN DE JOURNÉE" }

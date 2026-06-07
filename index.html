@@ -110,6 +110,11 @@
       padding: 9px 14px; border-bottom: 1px solid var(--card-bd);
       cursor: default; transition: background .1s;
     }
+    .act-time {
+      font-size: .68rem; color: #bbb; white-space: nowrap;
+      flex-shrink: 0; align-self: flex-start; margin-top: 4px;
+      font-variant-numeric: tabular-nums; min-width: 70px; text-align: right;
+    }
     .act-block:last-child { border-bottom: none; }
     body.edit-mode .act-block { cursor: pointer; }
     body.edit-mode .act-block:hover { background: #f0f4ff; }
@@ -701,6 +706,7 @@ function renderJournal() {
           const row = document.createElement('div');
           row.className = 'act-block';
           row.innerHTML = `
+            ${block.time ? `<span class="act-time">${block.time}</span>` : ''}
             <span class="tag">${block.tag}</span>
             <div class="act-content">${parseContent(block.content)}</div>
             <span class="act-edit-hint">✏️</span>
