@@ -65,6 +65,38 @@
       ]
     }
   },
+  "2026-06-15": {
+    "Lundi": {
+      "blocks": [
+        {
+          "type": "subject",
+          "tag": "Rituels",
+          "content": "- Un exercice sur le passé simple\n- 3 premiers problèmes de la fiche problème 31"
+        },
+        {
+          "type": "subject",
+          "tag": "APQ",
+          "content": "APQ"
+        },
+        {
+          "type": "subject",
+          "tag": "Rituels",
+          "content": "Correction collective des rituels"
+        },
+        {
+          "type": "subject",
+          "tag": "Dictée",
+          "content": "Dictée du lundi – Semaine 33\n- Correction collective"
+        },
+        { "type": "break", "label": "FIN DE JOURNÉE" }
+      ],
+      "attachments": []
+    },
+    "Mardi":    { "blocks": [], "attachments": [] },
+    "Mercredi": { "blocks": [], "attachments": [] },
+    "Jeudi":    { "blocks": [], "attachments": [] },
+    "Vendredi": { "blocks": [], "attachments": [] }
+  },
   "2026-06-08": {
     "Lundi": {
       "blocks": [
