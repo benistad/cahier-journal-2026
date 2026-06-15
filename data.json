@@ -99,6 +99,11 @@
           "tag": "EDL – Grammaire",
           "content": "Correction collective – exercice 1\nTransforme deux phrases simples en une phrase complexe (utilise un connecteur : car, quand, lorsque, et, mais, parce que, puis) :\n>> 1. Le ciel devint noir. La pluie commença à tomber.\n>> 2. Sarah ouvrit son sac. Elle chercha son cahier.\n>> 3. Le gâteau était chaud. Nous avons attendu.\n>> 4. Le maître parlait doucement. Les élèves écoutaient.\n>> 5. Il voulait sortir. Il avait encore du travail."
         },
+        {
+          "type": "subject",
+          "tag": "Numération",
+          "content": "Fractions décimales et nombres décimaux :\n- Écris chaque fraction décimale sous forme de nombre décimal\n>> 3/10 – 7/10 – 12/10 – 25/100 – 8/100 – 135/100 – 402/100 – 9/1000 – 75/1000 – 308/1000\n- Écris chaque nombre décimal sous forme de fraction décimale\n>> 0,4 – 0,8 – 0,05 – 0,72 – 1,25 – 3,06 – 0,009 – 2,407\n- Correction collective"
+        },
         { "type": "break", "label": "FIN DE JOURNÉE" }
       ],
       "attachments": []
