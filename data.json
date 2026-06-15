@@ -104,6 +104,12 @@
           "tag": "Numération",
           "content": "Fractions décimales et nombres décimaux :\n- Écris chaque fraction décimale sous forme de nombre décimal\n>> 3/10 – 7/10 – 12/10 – 25/100 – 8/100 – 135/100 – 402/100 – 9/1000 – 75/1000 – 308/1000\n- Écris chaque nombre décimal sous forme de fraction décimale\n>> 0,4 – 0,8 – 0,05 – 0,72 – 1,25 – 3,06 – 0,009 – 2,407\n- Correction collective"
         },
+        { "type": "break", "label": "PAUSE MERIDIENNE" },
+        {
+          "type": "subject",
+          "tag": "Histoire",
+          "content": "- Séance 3 : Le débarquement et la Libération\n- [Diaporama](docs/S3_Debarquement_Liberation.pptx) · [Fiche élèves](docs/S3_Fiche_Eleves.docx) · [Fiche enseignant](docs/S3_Fiche_Seance_Enseignant.docx)"
+        },
         { "type": "break", "label": "FIN DE JOURNÉE" }
       ],
       "attachments": []
