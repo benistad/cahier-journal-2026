@@ -88,6 +88,17 @@
           "tag": "Dictée",
           "content": "Dictée du lundi – Semaine 33\n- Correction collective"
         },
+        {
+          "type": "subject",
+          "tag": "EDL – Grammaire",
+          "content": "Propositions – Recopie chaque phrase et sépare les propositions avec des crochets :\n>> 1. Le professeur expliqua la consigne puis les élèves commencèrent.\n>> 2. Lorsque le réveil sonna, Amir ouvrit les yeux.\n>> 3. La voiture ralentit car le feu passa au rouge."
+        },
+        { "type": "break", "label": "RECREATION" },
+        {
+          "type": "subject",
+          "tag": "EDL – Grammaire",
+          "content": "Propositions (suite) :\n>> 4. J'aime les histoires qui font un peu peur.\n>> 5. Les enfants riaient pendant que le magicien préparait son tour.\n>> 6. Tu peux prendre ce livre si tu le ranges ensuite."
+        },
         { "type": "break", "label": "FIN DE JOURNÉE" }
       ],
       "attachments": []
