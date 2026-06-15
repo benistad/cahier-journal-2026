@@ -110,6 +110,12 @@
           "tag": "Histoire",
           "content": "- Séance 3 : Le débarquement et la Libération\n- [Diaporama](docs/S3_Debarquement_Liberation.pptx) · [Fiche élèves](docs/S3_Fiche_Eleves.docx) · [Fiche enseignant](docs/S3_Fiche_Seance_Enseignant.docx)"
         },
+        { "type": "break", "label": "RECREATION" },
+        {
+          "type": "subject",
+          "tag": "Histoire",
+          "content": "- Séance 3 (suite) : Copie de la leçon"
+        },
         { "type": "break", "label": "FIN DE JOURNÉE" }
       ],
       "attachments": []
