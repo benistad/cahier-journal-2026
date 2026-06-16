@@ -14,7 +14,7 @@
         {
           "type": "subject",
           "tag": "Dictée",
-          "content": "Dictée finale"
+          "content": "Dictée finale\n- [Dictées CM2 2025](docs/Dictees_CM2_2025.pdf)"
         },
         {
           "type": "subject",
@@ -86,7 +86,7 @@
         {
           "type": "subject",
           "tag": "Dictée",
-          "content": "Dictée du lundi – Semaine 33\n- Correction collective"
+          "content": "Dictée du lundi – Semaine 33\n- [Dictées CM2 2025](docs/Dictees_CM2_2025.pdf)\n- Correction collective"
         },
         {
           "type": "subject",
@@ -136,7 +136,7 @@
         {
           "type": "subject",
           "tag": "Dictée",
-          "content": "Dictée du mardi – Semaine 33"
+          "content": "Dictée du mardi – Semaine 33\n- [Dictées CM2 2025](docs/Dictees_CM2_2025.pdf)"
         },
         { "type": "break", "label": "FIN DE JOURNÉE" }
       ],
