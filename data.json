@@ -120,7 +120,23 @@
       ],
       "attachments": []
     },
-    "Mardi":    { "blocks": [], "attachments": [] },
+    "Mardi": {
+      "blocks": [
+        {
+          "type": "subject",
+          "tag": "Rituels",
+          "content": "Petit devin n°29 :\n- Qui parle ? → Shakou est un mâle ou une femelle ?\n- Sens ? → Que signifie « cacheter » ?\n- Quand ? → Quel jour sommes-nous ?\n- Fiche problème 31 – problèmes 4 et 5"
+        },
+        {
+          "type": "subject",
+          "tag": "EPS",
+          "content": "Baseball – Séance 1\n- Intervenant sportif"
+        },
+        { "type": "break", "label": "RECREATION" },
+        { "type": "break", "label": "FIN DE JOURNÉE" }
+      ],
+      "attachments": []
+    },
     "Mercredi": { "blocks": [], "attachments": [] },
     "Jeudi":    { "blocks": [], "attachments": [] },
     "Vendredi": { "blocks": [], "attachments": [] }
