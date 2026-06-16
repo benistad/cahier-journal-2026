@@ -133,6 +133,11 @@
           "content": "Baseball – Séance 1\n- Intervenant sportif"
         },
         { "type": "break", "label": "RECREATION" },
+        {
+          "type": "subject",
+          "tag": "Dictée",
+          "content": "Dictée du mardi – Semaine 33"
+        },
         { "type": "break", "label": "FIN DE JOURNÉE" }
       ],
       "attachments": []
