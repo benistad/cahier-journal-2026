@@ -138,6 +138,28 @@
           "tag": "Dictée",
           "content": "Dictée du mardi – Semaine 33\n- [Dictées CM2 2025](docs/Dictees_CM2_2025.pdf)"
         },
+        { "type": "break", "label": "PAUSE MERIDIENNE" },
+        {
+          "type": "subject",
+          "tag": "Histoire",
+          "content": "- Séance 3 (suite) : Fin de la copie de la leçon"
+        },
+        {
+          "type": "subject",
+          "tag": "EDL – Grammaire",
+          "content": "Souligne les verbes conjugués. Écris PS (phrase simple) ou PC (phrase complexe). Sépare les propositions avec des crochets si la phrase est complexe :\n>> La fusée décolle dans un grand bruit.\n>> Les spectateurs applaudissent quand le magicien disparaît.\n>> Le roi entra dans la salle et salua les invités.\n>> Le vieux marin regardait l'horizon.\n>> Je prends mon parapluie car le ciel devient gris.\n>> Les enfants jouaient, criaient et riaient dans le jardin.\n>> Lorsque le train arriva, les voyageurs montèrent rapidement.\n>> La porte grinça mais personne n'entra."
+        },
+        {
+          "type": "subject",
+          "tag": "Numération",
+          "content": "Fractions décimales – exercice\n- Correction collective"
+        },
+        { "type": "break", "label": "RECREATION" },
+        {
+          "type": "subject",
+          "tag": "Arts visuels",
+          "content": "Fin de l'objet souvenir de la guerre\nPour ceux qui ont fini – Sujet libre :\n- Je trace une forme bizarre au tableau\n- Vous la recopiez rapidement puis la transformez en quelque chose (animal, monstre, objet, personnage, paysage…)\n- 7 minutes – l'objectif est d'avoir une idée originale et lisible"
+        },
         { "type": "break", "label": "FIN DE JOURNÉE" }
       ],
       "attachments": []
