@@ -464,12 +464,20 @@
 <!-- ── TOAST ── -->
 <div id="toast"></div>
 
+<!-- Data layer (fonctions pures + adaptateurs de stockage), sans build,
+     compatibles GitHub Pages. Voir ARCHITECTURE.md §5. -->
+<script src="js/data-core.js"></script>
+<script src="js/storage-adapter.js"></script>
+<script src="js/remote-source.js"></script>
+
 <script>
 /* ═══════════════════════════════════════
    DATA & STATE
 ═══════════════════════════════════════ */
-const DAYS = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
+const DAYS = CJData.DAYS;
 const QUICK_SUBJECTS = ['Rituels','APQ','Dictée','EDL','Calcul Mental','Calcul','Sciences','Anglais','Histoire','Géographie','Lecture','Rédaction','Arts visuels','EPS','Musique','EMC'];
+
+const storageAdapter = CJStorage.createLocalStorageAdapter();
 
 let data = {};
 let weekOffset = 0;      // relative to this week's Monday
@@ -479,53 +487,31 @@ let editingIdx = null;   // null = add mode, number = edit mode
 let allCollapsed = false;
 let dragSrc = null;
 
-function load() { try { return JSON.parse(localStorage.getItem('cj_data') || '{}'); } catch { return {}; } }
-function save() { localStorage.setItem('cj_data', JSON.stringify(data)); }
-// Merge remote data.json into local (remote wins for existing weeks)
+function load() { return storageAdapter.load(); }
+function save() { storageAdapter.save(data); }
+// Charge data.json (source distante d'initialisation, cf. js/remote-source.js)
+// et fusionne dans `data` selon la règle actuelle (cf. js/data-core.js
+// mergeRemoteIntoLocal : remote écrase local pour les semaines communes).
 async function loadRemote() {
-  try {
-    const r = await fetch('data.json?t=' + Date.now());
-    if (!r.ok) return;
-    const remote = await r.json();
-    // Merge: remote keys overwrite local
-    Object.assign(data, remote);
-    localStorage.setItem('cj_data', JSON.stringify(data));
-    renderJournal();
-    if (panelOpen) { renderDayTabs(); renderBlocks(); }
-  } catch(e) { /* offline or local dev, ignore */ }
+  const remote = await CJRemote.fetchRemoteData('data.json');
+  if (!remote) return; // offline ou dev local, comportement inchangé
+  CJData.mergeRemoteIntoLocal(data, remote);
+  save();
+  renderJournal();
+  if (panelOpen) { renderDayTabs(); renderBlocks(); }
 }
 
-function weekKey(offset = weekOffset) {
-  const d = new Date();
-  const day = d.getDay() || 7; // 1=Mon … 7=Sun  (fix Sunday bug)
-  d.setDate(d.getDate() - day + 1 + offset * 7);
-  return d.toISOString().slice(0, 10);
-}
+function weekKey(offset = weekOffset) { return CJData.weekKey(offset); }
 
-function weekMonday(key) { return new Date(key + 'T12:00:00'); }
+function weekMonday(key) { return CJData.weekMonday(key); }
 
-function weekLabel(key) {
-  const d = weekMonday(key);
-  const e = new Date(d); e.setDate(d.getDate() + 4);
-  const f = dt => dt.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long' });
-  return `${f(d)} – ${f(e)} ${e.getFullYear()}`;
-}
+function weekLabel(key) { return CJData.weekLabel(key); }
 
-function dayDate(key, i) {
-  const d = weekMonday(key); d.setDate(d.getDate() + i);
-  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-}
+function dayDate(key, i) { return CJData.dayDate(key, i); }
 
-function ensureWeek(key) {
-  if (!data[key]) data[key] = {};
-  DAYS.forEach(d => { if (!data[key][d]) data[key][d] = { blocks: [], attachments: [] }; });
-  return data[key];
-}
+function ensureWeek(key) { return CJData.ensureWeek(data, key); }
 
-function getDayData(day, key = weekKey()) {
-  ensureWeek(key);
-  return data[key][day];
-}
+function getDayData(day, key = weekKey()) { return CJData.getDayData(data, day, key); }
 
 /* ═══════════════════════════════════════
    HELPERS
@@ -913,7 +899,7 @@ function autoResize(el) {
    EXPORT / IMPORT
 ═══════════════════════════════════════ */
 function exportJSON() {
-  const json = JSON.stringify(data, null, 2);
+  const json = storageAdapter.exportData(data);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -926,7 +912,7 @@ function importJSON(file) {
   const reader = new FileReader();
   reader.onload = e => {
     try {
-      const imported = JSON.parse(e.target.result);
+      const imported = storageAdapter.importData(e.target.result);
       if (confirm('Remplacer toutes les données actuelles par le fichier importé ?')) {
         data = imported; save(); update(); toast('Données importées ✓');
       }

@@ -1,0 +1,8 @@
+{
+  "name": "cahier-journal-2026",
+  "private": true,
+  "description": "Cahier journal statique (GitHub Pages). Aucune dépendance de build.",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}
