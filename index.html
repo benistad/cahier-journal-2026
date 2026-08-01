@@ -59,8 +59,10 @@
     body.authenticated #openrouter-usage:not([hidden]) { display: inline-flex; }
     #btn-sign-out { display: none; }
     #btn-drive { display: none; }
+    #btn-assistant { display: none; }
     body.authenticated #btn-sign-out { display: flex; }
     body.authenticated #btn-drive { display: flex; }
+    body.authenticated #btn-assistant { display: flex; }
 
     /* ── AUTHENTIFICATION ── */
     #auth-screen {
@@ -131,6 +133,43 @@
     .drive-result:hover { background: #f8fafc; }
     .drive-result strong { display: block; font-size: .8rem; }
     .drive-result span { display: block; color: #6b7280; font-size: .7rem; margin-top: 3px; }
+
+    /* ── ASSISTANT TEXTE ── */
+    #assistant-modal {
+      position: fixed; inset: 0; z-index: 960; background: rgba(15,23,42,.48);
+      display: flex; align-items: center; justify-content: center; padding: 18px;
+    }
+    #assistant-modal[hidden] { display: none; }
+    .assistant-card {
+      width: min(660px, 100%); max-height: min(820px, 94vh); overflow: auto;
+      background: #fff; border-radius: 14px; box-shadow: 0 20px 55px rgba(15,23,42,.3); padding: 20px;
+    }
+    .assistant-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .assistant-head h2 { font-size: 1.08rem; color: var(--panel-bg); }
+    .assistant-context { display: flex; align-items: end; gap: 10px; margin: 14px 0 10px; flex-wrap: wrap; }
+    .assistant-context label { display: grid; gap: 4px; color: #4b5563; font-size: .72rem; font-weight: 700; }
+    .assistant-context select { border: 1px solid #d1d5db; border-radius: 7px; padding: 7px 9px; background: #fff; font: inherit; }
+    #assistant-week-label { color: #6b7280; font-size: .75rem; padding-bottom: 8px; }
+    .assistant-history { display: grid; gap: 8px; margin: 10px 0; }
+    .assistant-bubble { max-width: 88%; border-radius: 10px; padding: 9px 11px; font-size: .79rem; line-height: 1.45; white-space: pre-wrap; }
+    .assistant-bubble.bot { background: #eef2ff; color: #27345e; }
+    .assistant-bubble.user { background: #e8f4ea; color: #14532d; margin-left: auto; }
+    .assistant-privacy { color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 7px; padding: 8px 9px; font-size: .7rem; line-height: 1.4; }
+    #assistant-narrative { width: 100%; min-height: 112px; resize: vertical; margin-top: 10px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; line-height: 1.45; }
+    #assistant-narrative:focus { outline: 2px solid #c7d2fe; border-color: var(--accent); }
+    .assistant-compose-actions, .assistant-preview-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 9px; }
+    #assistant-status { color: #6b7280; font-size: .72rem; line-height: 1.4; min-height: 18px; }
+    #assistant-preview { margin-top: 16px; border-top: 1px solid #e5e7eb; padding-top: 14px; }
+    #assistant-preview[hidden] { display: none; }
+    #assistant-preview h3 { font-size: .9rem; color: var(--panel-bg); margin-bottom: 5px; }
+    #assistant-preview-summary { color: #4b5563; font-size: .76rem; margin-bottom: 9px; }
+    .assistant-preview-list { display: grid; gap: 8px; }
+    .assistant-preview-item { border: 1px solid #dbe2ea; border-radius: 8px; padding: 9px 10px; background: #fafbfc; }
+    .assistant-preview-item strong { display: block; color: #27345e; font-size: .8rem; }
+    .assistant-preview-item p { white-space: pre-wrap; font-size: .76rem; line-height: 1.4; margin-top: 4px; }
+    .assistant-preview-docs { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+    .assistant-preview-docs a { border: 1px solid #bfdbfe; background: #eff6ff; color: #1d4ed8; border-radius: 20px; padding: 3px 7px; font-size: .66rem; text-decoration: none; }
+    #assistant-apply { background: #15803d; }
 
     /* ── MAIN ── */
     .container { max-width: 800px; margin: 0 auto; padding: 20px 14px 80px; transition: margin-right .25s ease; }
@@ -469,6 +508,7 @@
   <div class="top-actions">
     <span class="sync-status" id="sync-status">Connexion…</span>
     <button id="openrouter-usage" type="button" hidden aria-label="Dépenses OpenRouter"></button>
+    <button class="icon-btn" id="btn-assistant" title="Assistant du cahier journal">✨</button>
     <button class="icon-btn" id="btn-drive" title="Google Drive pédagogique">☁️</button>
     <button class="icon-btn" id="btn-sign-out" title="Se déconnecter">↪</button>
     <button class="icon-btn" id="btn-collapse" title="Tout replier / déplier">⊟</button>
@@ -497,6 +537,41 @@
       <label for="drive-search-input">Rechercher un document</label>
       <input id="drive-search-input" type="search" placeholder="Ex. présent, Moyen Âge, multiplier…">
       <div class="drive-results" id="drive-results"></div>
+    </div>
+  </div>
+</div>
+
+<div id="assistant-modal" hidden role="dialog" aria-modal="true" aria-labelledby="assistant-title">
+  <div class="assistant-card">
+    <div class="assistant-head">
+      <h2 id="assistant-title">✨ Assistant du cahier journal</h2>
+      <button class="icon-btn" id="assistant-close" title="Fermer">✕</button>
+    </div>
+    <div class="assistant-context">
+      <label for="assistant-day">Jour à compléter
+        <select id="assistant-day">
+          <option>Lundi</option><option>Mardi</option><option>Mercredi</option><option>Jeudi</option><option>Vendredi</option>
+        </select>
+      </label>
+      <span id="assistant-week-label"></span>
+    </div>
+    <div class="assistant-history" id="assistant-history">
+      <div class="assistant-bubble bot">Raconte-moi simplement ce qui a été fait en classe. Je préparerai un aperçu avant toute modification.</div>
+    </div>
+    <div class="assistant-privacy">N’indique aucun nom d’élève ni donnée personnelle. Utilise par exemple « un élève » ou « un groupe ».</div>
+    <textarea id="assistant-narrative" maxlength="8000" placeholder="Ex. Ce matin, nous avons travaillé le présent en français. Les élèves ont repéré les verbes puis complété la trace écrite…"></textarea>
+    <div class="assistant-compose-actions">
+      <button class="btn-primary" id="assistant-propose">Préparer l’aperçu</button>
+      <span id="assistant-status" role="status"></span>
+    </div>
+    <div id="assistant-preview" hidden>
+      <h3>Aperçu — rien n’est encore enregistré</h3>
+      <div id="assistant-preview-summary"></div>
+      <div class="assistant-preview-list" id="assistant-preview-list"></div>
+      <div class="assistant-preview-actions">
+        <button class="btn-primary" id="assistant-apply">Appliquer au cahier</button>
+        <button class="btn-primary" id="assistant-revise">Modifier le récit</button>
+      </div>
     </div>
   </div>
 </div>
@@ -609,6 +684,7 @@
 <script src="js/drive-catalog.js"></script>
 <script src="js/drive-client.js"></script>
 <script src="js/openrouter-usage.js"></script>
+<script src="js/assistant-client.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase-sync.js"></script>
@@ -644,6 +720,8 @@ let driveClient = null;
 let driveStatus = null;
 let openRouterUsageClient = null;
 let openRouterUsageTimer = null;
+let assistantClient = null;
+let assistantProposal = null;
 
 function load() { return storageAdapter.load(); }
 function save() {
@@ -837,6 +915,116 @@ function startOpenRouterUsageRefresh() {
   clearInterval(openRouterUsageTimer);
   refreshOpenRouterUsage();
   openRouterUsageTimer = setInterval(refreshOpenRouterUsage, 60000);
+}
+
+function assistantMessage(kind, message) {
+  const bubble = document.createElement('div');
+  bubble.className = `assistant-bubble ${kind}`;
+  bubble.textContent = message;
+  document.getElementById('assistant-history').appendChild(bubble);
+}
+
+function openAssistant() {
+  assistantProposal = null;
+  document.getElementById('assistant-preview').hidden = true;
+  document.getElementById('assistant-status').textContent = '';
+  document.getElementById('assistant-day').value = editDay;
+  document.getElementById('assistant-week-label').textContent = `Semaine du ${weekLabel(weekKey())}`;
+  document.getElementById('assistant-modal').hidden = false;
+  document.getElementById('assistant-narrative').focus();
+}
+
+function closeAssistant() {
+  document.getElementById('assistant-modal').hidden = true;
+}
+
+function renderAssistantPreview(proposal) {
+  const preview = document.getElementById('assistant-preview');
+  const list = document.getElementById('assistant-preview-list');
+  list.innerHTML = '';
+  document.getElementById('assistant-preview-summary').textContent = proposal.summary;
+  CJAssistant.previewItems(proposal).forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'assistant-preview-item';
+    const title = document.createElement('strong');
+    title.textContent = `${item.day}${item.time ? ` · ${item.time}` : ''} — ${item.tag}`;
+    const content = document.createElement('p');
+    content.textContent = item.content;
+    card.append(title, content);
+    if (item.documents.length) {
+      const documents = document.createElement('div');
+      documents.className = 'assistant-preview-docs';
+      item.documents.forEach(document => {
+        const link = document.createElement('a');
+        link.href = document.url;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = document.title;
+        documents.appendChild(link);
+      });
+      card.appendChild(documents);
+    }
+    list.appendChild(card);
+  });
+  preview.hidden = false;
+}
+
+async function requestAssistantProposal() {
+  if (!assistantClient || !currentUser) return;
+  const narrative = document.getElementById('assistant-narrative').value.trim();
+  const status = document.getElementById('assistant-status');
+  const button = document.getElementById('assistant-propose');
+  if (narrative.length < 10) {
+    status.textContent = 'Raconte un peu plus précisément ce qui a été fait.';
+    return;
+  }
+  assistantProposal = null;
+  document.getElementById('assistant-preview').hidden = true;
+  assistantMessage('user', narrative);
+  button.disabled = true;
+  status.textContent = 'Je structure le récit et vérifie les documents réels…';
+  try {
+    const response = await assistantClient.propose({
+      narrative,
+      weekKey: weekKey(),
+      day: document.getElementById('assistant-day').value
+    });
+    assistantProposal = response.proposal;
+    if (assistantProposal.clarificationNeeded) {
+      assistantMessage('bot', assistantProposal.clarificationQuestion);
+      status.textContent = 'Précise ta réponse dans le récit puis relance l’aperçu.';
+    } else {
+      assistantMessage('bot', assistantProposal.summary);
+      renderAssistantPreview(assistantProposal);
+      const cost = response.usage && typeof response.usage.cost === 'number'
+        ? ` · coût ${CJOpenRouterUsage.formatDollars(response.usage.cost)}` : '';
+      status.textContent = `${response.candidateCount} document(s) candidat(s) vérifié(s)${cost}`;
+    }
+    refreshOpenRouterUsage();
+  } catch (error) {
+    status.textContent = 'La proposition n’a pas pu être préparée de façon fiable. Réessaie dans un instant.';
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function applyAssistantProposal() {
+  if (!assistantProposal || assistantProposal.clarificationNeeded) return;
+  const result = CJAssistant.applyProposal(data, assistantProposal);
+  if (result.errors.length) {
+    document.getElementById('assistant-status').textContent = 'Aucune modification appliquée : la proposition n’est plus compatible avec le cahier actuel.';
+    return;
+  }
+  data = result.data;
+  save();
+  update();
+  const count = result.acceptedOperations.length;
+  assistantMessage('bot', `${count} activité(s) ajoutée(s) au cahier journal.`);
+  assistantProposal = null;
+  document.getElementById('assistant-preview').hidden = true;
+  document.getElementById('assistant-narrative').value = '';
+  document.getElementById('assistant-status').textContent = 'Modifications enregistrées et synchronisées.';
+  toast(`${count} activité(s) ajoutée(s) ✓`);
 }
 
 function renderDriveResults(query) {
@@ -1048,6 +1236,7 @@ async function initializeSupabase() {
   syncClient = CJSupabaseSync.createSyncClient(supabaseClient);
   driveClient = CJDriveClient.createDriveClient(supabaseClient);
   openRouterUsageClient = CJOpenRouterUsage.createUsageClient(supabaseClient);
+  assistantClient = CJAssistant.createAssistantClient(supabaseClient);
   authSubscription = syncClient.onAuthStateChange((event, session) => {
     if (event === 'PASSWORD_RECOVERY') {
       currentUser = session && session.user ? session.user : null;
@@ -1489,6 +1678,7 @@ document.getElementById('btn-sign-out').addEventListener('click', async () => {
   document.getElementById('openrouter-usage').hidden = true;
   closePanel();
   document.getElementById('drive-modal').hidden = true;
+  closeAssistant();
   setSyncStatus('Déconnecté');
   showLoginForm();
 });
@@ -1519,6 +1709,18 @@ document.getElementById('drive-search-input').addEventListener('input', event =>
   renderDriveResults(event.target.value);
 });
 document.getElementById('openrouter-usage').addEventListener('click', refreshOpenRouterUsage);
+document.getElementById('btn-assistant').addEventListener('click', openAssistant);
+document.getElementById('assistant-close').addEventListener('click', closeAssistant);
+document.getElementById('assistant-modal').addEventListener('click', event => {
+  if (event.target.id === 'assistant-modal') closeAssistant();
+});
+document.getElementById('assistant-propose').addEventListener('click', requestAssistantProposal);
+document.getElementById('assistant-apply').addEventListener('click', applyAssistantProposal);
+document.getElementById('assistant-revise').addEventListener('click', () => {
+  document.getElementById('assistant-preview').hidden = true;
+  assistantProposal = null;
+  document.getElementById('assistant-narrative').focus();
+});
 
 document.getElementById('conflict-keep-local').addEventListener('click', async () => {
   if (!pendingConflict) return;
