@@ -51,6 +51,12 @@
     .btn-primary:hover { background: #3a5aaa; }
     .btn-primary.on { background: #16a34a; }
     .sync-status { font-size: .68rem; opacity: .8; white-space: nowrap; }
+    #openrouter-usage {
+      display: none; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.1);
+      color: #fff; border-radius: 20px; padding: 4px 8px; cursor: pointer;
+      font-size: .65rem; white-space: nowrap;
+    }
+    body.authenticated #openrouter-usage:not([hidden]) { display: inline-flex; }
     #btn-sign-out { display: none; }
     #btn-drive { display: none; }
     body.authenticated #btn-sign-out { display: flex; }
@@ -462,6 +468,7 @@
   </div>
   <div class="top-actions">
     <span class="sync-status" id="sync-status">Connexion…</span>
+    <button id="openrouter-usage" type="button" hidden aria-label="Dépenses OpenRouter"></button>
     <button class="icon-btn" id="btn-drive" title="Google Drive pédagogique">☁️</button>
     <button class="icon-btn" id="btn-sign-out" title="Se déconnecter">↪</button>
     <button class="icon-btn" id="btn-collapse" title="Tout replier / déplier">⊟</button>
@@ -601,6 +608,7 @@
 <script src="js/journal-operations.js"></script>
 <script src="js/drive-catalog.js"></script>
 <script src="js/drive-client.js"></script>
+<script src="js/openrouter-usage.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase-sync.js"></script>
@@ -634,6 +642,8 @@ let authMode = 'login';
 let authSubscription = null;
 let driveClient = null;
 let driveStatus = null;
+let openRouterUsageClient = null;
+let openRouterUsageTimer = null;
 
 function load() { return storageAdapter.load(); }
 function save() {
@@ -807,6 +817,26 @@ function showPasswordSetup(message = '') {
 
 function setDriveMessage(message) {
   document.getElementById('drive-status').textContent = message;
+}
+
+async function refreshOpenRouterUsage() {
+  if (!openRouterUsageClient || !currentUser || document.hidden) return;
+  const button = document.getElementById('openrouter-usage');
+  try {
+    const usage = await openRouterUsageClient.fetchUsage();
+    const display = CJOpenRouterUsage.displayUsage(usage);
+    button.hidden = display.hidden;
+    button.textContent = display.label;
+    button.title = display.title;
+  } catch (error) {
+    if (!button.hidden) button.title = 'Dernière valeur connue · Actualisation momentanément indisponible';
+  }
+}
+
+function startOpenRouterUsageRefresh() {
+  clearInterval(openRouterUsageTimer);
+  refreshOpenRouterUsage();
+  openRouterUsageTimer = setInterval(refreshOpenRouterUsage, 60000);
 }
 
 function renderDriveResults(query) {
@@ -995,6 +1025,7 @@ async function connectSync() {
     }
     syncClient.subscribe(handleRemoteRow);
     initializeDrive();
+    startOpenRouterUsageRefresh();
   } catch (error) {
     hideAuth();
     syncReady = false;
@@ -1016,6 +1047,7 @@ async function initializeSupabase() {
   });
   syncClient = CJSupabaseSync.createSyncClient(supabaseClient);
   driveClient = CJDriveClient.createDriveClient(supabaseClient);
+  openRouterUsageClient = CJOpenRouterUsage.createUsageClient(supabaseClient);
   authSubscription = syncClient.onAuthStateChange((event, session) => {
     if (event === 'PASSWORD_RECOVERY') {
       currentUser = session && session.user ? session.user : null;
@@ -1453,6 +1485,8 @@ document.getElementById('btn-sign-out').addEventListener('click', async () => {
   await syncClient.signOut();
   currentUser = null;
   syncReady = false;
+  clearInterval(openRouterUsageTimer);
+  document.getElementById('openrouter-usage').hidden = true;
   closePanel();
   document.getElementById('drive-modal').hidden = true;
   setSyncStatus('Déconnecté');
@@ -1484,6 +1518,7 @@ document.getElementById('drive-sync').addEventListener('click', runDriveSync);
 document.getElementById('drive-search-input').addEventListener('input', event => {
   renderDriveResults(event.target.value);
 });
+document.getElementById('openrouter-usage').addEventListener('click', refreshOpenRouterUsage);
 
 document.getElementById('conflict-keep-local').addEventListener('click', async () => {
   if (!pendingConflict) return;
@@ -1513,7 +1548,10 @@ window.addEventListener('online', () => {
   if (syncClient && !pendingConflict) connectSync();
 });
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && syncClient && currentUser && !pendingConflict) connectSync();
+  if (document.visibilityState === 'visible' && syncClient && currentUser && !pendingConflict) {
+    connectSync();
+    refreshOpenRouterUsage();
+  }
 });
 
 document.getElementById('btn-toggle-edit').addEventListener('click', () => panelOpen ? closePanel() : openPanel());
