@@ -6,19 +6,19 @@
      importData(j)  → parse une chaîne (ou objet) JSON importée
      backup()       → snapshot de sécurité horodaté, sans y toucher
 
-   La clé de stockage reste STRICTEMENT 'cj_data', identique à
-   l'implémentation historique. Aucune autre source de stockage
-   (Supabase, etc.) n'est introduite à cette étape.
+   La clé principale reste 'cj_data'. La première lecture d'une valeur
+   historique crée une sauvegarde unique avant migration.
 ═══════════════════════════════════════════════════════════ */
 (function (root, factory) {
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = factory();
+    module.exports = factory(require('./journal-schema.js'));
   } else {
-    root.CJStorage = factory();
+    root.CJStorage = factory(root.CJSchema);
   }
-})(typeof self !== 'undefined' ? self : this, function () {
+})(typeof self !== 'undefined' ? self : this, function (CJSchema) {
 
   const STORAGE_KEY = 'cj_data';
+  const PRE_MIGRATION_BACKUP_KEY = 'cj_data_before_schema_v2';
 
   function createLocalStorageAdapter(storageImpl) {
     const ls = storageImpl || (typeof localStorage !== 'undefined' ? localStorage : null);
@@ -28,9 +28,14 @@
       // Identique à l'ancien load() : JSON.parse tolérant, {} par défaut.
       load() {
         try {
-          return JSON.parse(ls.getItem(STORAGE_KEY) || '{}');
+          const raw = ls.getItem(STORAGE_KEY);
+          const parsed = JSON.parse(raw || '{}');
+          if (raw !== null && CJSchema.isLegacySchema(parsed) && ls.getItem(PRE_MIGRATION_BACKUP_KEY) === null) {
+            ls.setItem(PRE_MIGRATION_BACKUP_KEY, raw);
+          }
+          return CJSchema.migrate(parsed);
         } catch {
-          return {};
+          return CJSchema.migrate({});
         }
       },
 
@@ -48,7 +53,8 @@
       // Identique au cœur de l'ancien importJSON() (sans la confirmation
       // utilisateur ni le rendu, qui restent une préoccupation d'UI).
       importData(json) {
-        return typeof json === 'string' ? JSON.parse(json) : json;
+        const parsed = typeof json === 'string' ? JSON.parse(json) : json;
+        return CJSchema.migrate(parsed);
       },
 
       // Sauvegarde de sécurité : copie l'état courant de cj_data sous une
@@ -64,5 +70,5 @@
     };
   }
 
-  return { STORAGE_KEY, createLocalStorageAdapter };
+  return { STORAGE_KEY, PRE_MIGRATION_BACKUP_KEY, createLocalStorageAdapter };
 });

@@ -1,6 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const CJStorage = require('../js/storage-adapter.js');
+const CJSchema = require('../js/journal-schema.js');
 
 // Mock localStorage en mémoire : les tests ne touchent jamais au vrai
 // navigateur ni à un quelconque fichier sur disque.
@@ -21,7 +22,7 @@ test('la clé de stockage utilisée est bien "cj_data"', () => {
 test('sauvegarde puis rechargement depuis localStorage restitue les mêmes données', () => {
   const mock = createMockStorage();
   const adapter = CJStorage.createLocalStorageAdapter(mock);
-  const data = { '2026-06-15': { Lundi: { blocks: [{ type: 'subject', tag: 'Rituels', content: 'x' }], attachments: [] } } };
+  const data = CJSchema.migrate({ '2026-06-15': { Lundi: { blocks: [{ type: 'subject', tag: 'Rituels', content: 'x' }], attachments: [] } } });
 
   adapter.save(data);
   const reloaded = adapter.load();
@@ -43,19 +44,19 @@ test('import puis export ne perd aucune donnée', () => {
   const imported = adapter.importData(json);
   const exported = adapter.exportData(imported);
 
-  assert.deepEqual(JSON.parse(exported), original);
+  assert.deepEqual(JSON.parse(exported), CJSchema.migrate(original));
 });
 
 test('load() gère un JSON localStorage invalide en renvoyant {}', () => {
   const mock = createMockStorage({ cj_data: '{ceci nest pas du json valide' });
   const adapter = CJStorage.createLocalStorageAdapter(mock);
-  assert.deepEqual(adapter.load(), {});
+  assert.deepEqual(adapter.load(), { schemaVersion: 2, weeks: {} });
 });
 
 test('load() renvoie {} quand localStorage est vide (première visite)', () => {
   const mock = createMockStorage();
   const adapter = CJStorage.createLocalStorageAdapter(mock);
-  assert.deepEqual(adapter.load(), {});
+  assert.deepEqual(adapter.load(), { schemaVersion: 2, weeks: {} });
 });
 
 test('backup() copie les données sous une clé distincte sans modifier cj_data', () => {

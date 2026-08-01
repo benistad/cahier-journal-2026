@@ -466,9 +466,11 @@
 
 <!-- Data layer (fonctions pures + adaptateurs de stockage), sans build,
      compatibles GitHub Pages. Voir ARCHITECTURE.md §5. -->
+<script src="js/journal-schema.js"></script>
 <script src="js/data-core.js"></script>
 <script src="js/storage-adapter.js"></script>
 <script src="js/remote-source.js"></script>
+<script src="js/journal-operations.js"></script>
 
 <script>
 /* ═══════════════════════════════════════
@@ -495,7 +497,7 @@ function save() { storageAdapter.save(data); }
 async function loadRemote() {
   const remote = await CJRemote.fetchRemoteData('data.json');
   if (!remote) return; // offline ou dev local, comportement inchangé
-  CJData.mergeRemoteIntoLocal(data, remote);
+  CJData.mergeRemoteIntoLocal(data, CJSchema.migrate(remote));
   save();
   renderJournal();
   if (panelOpen) { renderDayTabs(); renderBlocks(); }
@@ -512,6 +514,13 @@ function dayDate(key, i) { return CJData.dayDate(key, i); }
 function ensureWeek(key) { return CJData.ensureWeek(data, key); }
 
 function getDayData(day, key = weekKey()) { return CJData.getDayData(data, day, key); }
+
+function applyJournalOperations(operations, options = {}) {
+  const result = CJOperations.applyOperations(data, operations, options);
+  if (result.errors.length) return result;
+  data = result.data;
+  return result;
+}
 
 /* ═══════════════════════════════════════
    HELPERS
@@ -751,7 +760,10 @@ function renderBlocks() {
 
     /* Delete */
     row.querySelector('.b-btn.del').addEventListener('click', () => {
-      blocks.splice(i, 1);
+      const result = applyJournalOperations([{
+        type: 'deleteBlock', weekKey: weekKey(), day: editDay, blockId: block.id
+      }], { atomic: true });
+      if (result.errors.length) { toast('Suppression impossible'); return; }
       if (editingIdx === i) cancelEdit();
       save(); renderJournal(); renderBlocks();
       toast('Bloc supprimé');
@@ -765,8 +777,11 @@ function renderBlocks() {
     row.addEventListener('drop', e => {
       e.preventDefault(); row.classList.remove('drag-over');
       if (dragSrc === null || dragSrc === i) return;
-      const [moved] = blocks.splice(dragSrc, 1);
-      blocks.splice(i, 0, moved);
+      const moved = blocks[dragSrc];
+      const result = applyJournalOperations([{
+        type: 'moveBlock', weekKey: weekKey(), day: editDay, blockId: moved.id, toIndex: i
+      }], { atomic: true });
+      if (result.errors.length) { toast('Déplacement impossible'); return; }
       save(); renderJournal(); renderBlocks();
     });
 
@@ -831,14 +846,21 @@ function submitActivity() {
   if (!tag) { document.getElementById('input-tag').focus(); return; }
 
   const blocks = getDayData(editDay).blocks;
-  const block = { type: 'subject', tag, content };
 
   if (editingIdx !== null) {
-    blocks[editingIdx] = block;
+    const result = applyJournalOperations([{
+      type: 'updateBlock', weekKey: weekKey(), day: editDay,
+      blockId: blocks[editingIdx].id, changes: { tag, content }
+    }], { atomic: true });
+    if (result.errors.length) { toast('Mise à jour impossible'); return; }
     toast(`"${tag}" mis à jour`);
     cancelEdit();
   } else {
-    blocks.push(block);
+    const result = applyJournalOperations([{
+      type: 'addBlock', weekKey: weekKey(), day: editDay,
+      block: { type: 'subject', tag, content, documents: [] }
+    }], { atomic: true });
+    if (result.errors.length) { toast('Ajout impossible'); return; }
     toast(`"${tag}" ajouté`);
     document.getElementById('input-tag').value = '';
     document.getElementById('input-content').value = '';
@@ -927,14 +949,18 @@ function importJSON(file) {
 function copyPrevWeek() {
   const prevKey = weekKey(weekOffset - 1);
   const currKey = weekKey();
-  if (!data[prevKey]) { toast('Pas de données la semaine précédente'); return; }
+  if (!data.weeks[prevKey]) { toast('Pas de données la semaine précédente'); return; }
   if (!confirm('Copier le planning de la semaine précédente sur cette semaine ?\n(les blocs actuels seront remplacés)')) return;
 
   ensureWeek(currKey);
   DAYS.forEach(d => {
-    const prev = data[prevKey][d];
+    const prev = data.weeks[prevKey][d];
     if (prev) {
-      data[currKey][d].blocks = JSON.parse(JSON.stringify(prev.blocks || []));
+      data.weeks[currKey][d].blocks = (prev.blocks || []).map(block => {
+        const copy = CJSchema.clone(block);
+        copy.id = CJSchema.createId();
+        return copy;
+      });
       // Don't copy attachments (files would be duplicated)
     }
   });
@@ -978,7 +1004,11 @@ document.getElementById('input-content').addEventListener('input', function() { 
 /* Break buttons */
 document.querySelectorAll('.break-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    getDayData(editDay).blocks.push({ type: 'break', label: btn.dataset.break });
+    const result = applyJournalOperations([{
+      type: 'addBlock', weekKey: weekKey(), day: editDay,
+      block: { type: 'break', label: btn.dataset.break }
+    }], { atomic: true });
+    if (result.errors.length) { toast('Ajout impossible'); return; }
     save(); renderJournal(); renderBlocks(); toast(btn.dataset.break + ' ajouté');
   });
 });

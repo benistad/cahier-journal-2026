@@ -6,11 +6,11 @@
 ═══════════════════════════════════════════════════════════ */
 (function (root, factory) {
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = factory();
+    module.exports = factory(require('./journal-schema.js'));
   } else {
-    root.CJData = factory();
+    root.CJData = factory(root.CJSchema);
   }
-})(typeof self !== 'undefined' ? self : this, function () {
+})(typeof self !== 'undefined' ? self : this, function (CJSchema) {
 
   const DAYS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
 
@@ -54,14 +54,14 @@
 
   // Mutation en place de `data[key]`, comme l'ancien ensureWeek(key).
   function ensureWeek(data, key) {
-    if (!data[key]) data[key] = {};
-    data[key] = normalizeWeek(data[key]);
-    return data[key];
+    const weeks = CJSchema && CJSchema.isCurrentSchema(data) ? data.weeks : data;
+    if (!weeks[key]) weeks[key] = {};
+    weeks[key] = normalizeWeek(weeks[key]);
+    return weeks[key];
   }
 
   function getDayData(data, day, key) {
-    ensureWeek(data, key);
-    return data[key][day];
+    return ensureWeek(data, key)[day];
   }
 
   // ─────────────────────────────────────────────────────────
@@ -78,7 +78,9 @@
   // synchronisation distante (étape suivante), pas à cette étape.
   // ─────────────────────────────────────────────────────────
   function mergeRemoteIntoLocal(local, remote) {
-    Object.assign(local, remote);
+    const localWeeks = CJSchema && CJSchema.isCurrentSchema(local) ? local.weeks : local;
+    const remoteWeeks = CJSchema && CJSchema.isCurrentSchema(remote) ? remote.weeks : remote;
+    Object.assign(localWeeks, remoteWeeks);
     return local;
   }
 
