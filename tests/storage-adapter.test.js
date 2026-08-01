@@ -70,3 +70,29 @@ test('backup() copie les données sous une clé distincte sans modifier cj_data'
   assert.equal(mock.getItem(backupKey), '{"2026-06-15":{}}');
   assert.equal(mock.getItem('cj_data'), '{"2026-06-15":{}}'); // inchangé
 });
+
+test('la sauvegarde pré-Supabase est unique et ne peut pas être écrasée', () => {
+  const mock = createMockStorage({ cj_data: '{"premiere":true}' });
+  const adapter = CJStorage.createLocalStorageAdapter(mock);
+  assert.equal(adapter.backupBeforeRemoteMigration(), true);
+  mock.setItem('cj_data', '{"seconde":true}');
+  assert.equal(adapter.backupBeforeRemoteMigration(), false);
+  assert.equal(mock.getItem(CJStorage.PRE_REMOTE_BACKUP_KEY), '{"premiere":true}');
+});
+
+test('les métadonnées de synchronisation sont validées à la lecture et à l’écriture', () => {
+  const mock = createMockStorage();
+  const adapter = CJStorage.createLocalStorageAdapter(mock);
+  assert.deepEqual(adapter.loadSyncMeta(), { revision: null, dirty: false, ownerId: null });
+  adapter.saveSyncMeta({ revision: 4, dirty: true, ownerId: 'user-1', ignored: 'x' });
+  assert.deepEqual(adapter.loadSyncMeta(), { revision: 4, dirty: true, ownerId: 'user-1' });
+});
+
+test('une copie de conflit est enregistrée sous une clé de récupération distincte', () => {
+  const mock = createMockStorage({ cj_data: '{"courant":true}' });
+  const adapter = CJStorage.createLocalStorageAdapter(mock);
+  const key = adapter.saveConflict({ schemaVersion: 2, weeks: {} }, 1234);
+  assert.equal(key, 'cj_conflict_1234');
+  assert.equal(mock.getItem(key), '{"schemaVersion":2,"weeks":{}}');
+  assert.equal(mock.getItem('cj_data'), '{"courant":true}');
+});

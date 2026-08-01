@@ -50,6 +50,52 @@
     }
     .btn-primary:hover { background: #3a5aaa; }
     .btn-primary.on { background: #16a34a; }
+    .sync-status { font-size: .68rem; opacity: .8; white-space: nowrap; }
+    #btn-sign-out { display: none; }
+    body.authenticated #btn-sign-out { display: flex; }
+
+    /* ── AUTHENTIFICATION ── */
+    #auth-screen {
+      position: fixed; inset: 0; z-index: 1000; background: var(--body-bg);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    #auth-screen.hidden { display: none; }
+    body:not(.authenticated) .topbar,
+    body:not(.authenticated) #sync-conflict,
+    body:not(.authenticated) #journal-container,
+    body:not(.authenticated) #overlay,
+    body:not(.authenticated) #edit-panel { visibility: hidden; }
+    .auth-card {
+      width: min(390px, 100%); background: #fff; border-radius: 14px;
+      box-shadow: 0 12px 40px rgba(30,42,74,.18); padding: 28px;
+    }
+    .auth-card h2 { color: var(--panel-bg); font-size: 1.2rem; margin-bottom: 7px; }
+    .auth-card p { color: #6b7280; font-size: .84rem; line-height: 1.45; margin-bottom: 18px; }
+    .auth-card label { display: block; font-size: .75rem; font-weight: 700; color: #555; margin: 10px 0 4px; }
+    .auth-card input {
+      width: 100%; border: 1px solid #d1d5db; border-radius: 7px;
+      padding: 10px; font: inherit; outline: none;
+    }
+    .auth-card input:focus { border-color: var(--accent); }
+    .auth-card button {
+      width: 100%; border: 0; border-radius: 7px; background: var(--accent);
+      color: #fff; padding: 10px; font-weight: 700; margin-top: 16px; cursor: pointer;
+    }
+    .auth-card button:disabled { opacity: .55; cursor: wait; }
+    #auth-message { min-height: 18px; color: #b91c1c; font-size: .78rem; margin-top: 10px; }
+
+    /* ── CONFLITS DE SYNCHRONISATION ── */
+    #sync-conflict {
+      display: none; position: sticky; top: 50px; z-index: 90;
+      background: #fff7ed; border-bottom: 1px solid #fdba74;
+      color: #7c2d12; padding: 9px 14px; font-size: .78rem;
+      align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;
+    }
+    #sync-conflict.visible { display: flex; }
+    #sync-conflict button {
+      border: 1px solid #fb923c; background: #fff; color: #9a3412;
+      border-radius: 5px; padding: 4px 8px; cursor: pointer; font-weight: 600;
+    }
 
     /* ── MAIN ── */
     .container { max-width: 800px; margin: 0 auto; padding: 20px 14px 80px; transition: margin-right .25s ease; }
@@ -351,6 +397,18 @@
 </head>
 <body>
 
+<!-- ── AUTHENTIFICATION SUPABASE ── -->
+<div id="auth-screen">
+  <form class="auth-card" id="auth-form">
+    <h2>📒 Cahier Journal</h2>
+    <p>Recevez un lien sécurisé par e-mail pour retrouver et synchroniser votre cahier sur tous vos appareils.</p>
+    <label for="auth-email">Adresse e-mail</label>
+    <input type="email" id="auth-email" autocomplete="email" value="durandlalanterne@gmail.com" required>
+    <button type="submit" id="auth-submit">Recevoir mon lien de connexion</button>
+    <div id="auth-message" role="alert"></div>
+  </form>
+</div>
+
 <!-- ── TOPBAR ── -->
 <div class="topbar">
   <h1>📒 Cahier Journal</h1>
@@ -361,9 +419,17 @@
     <button class="icon-btn" id="btn-next" title="Semaine suivante">›</button>
   </div>
   <div class="top-actions">
+    <span class="sync-status" id="sync-status">Connexion…</span>
+    <button class="icon-btn" id="btn-sign-out" title="Se déconnecter">↪</button>
     <button class="icon-btn" id="btn-collapse" title="Tout replier / déplier">⊟</button>
     <button class="btn-primary" id="btn-toggle-edit">✏️ Éditer</button>
   </div>
+</div>
+
+<div id="sync-conflict" role="alert">
+  <span>Une autre version existe sur le serveur. Une copie locale de récupération a été conservée.</span>
+  <button id="conflict-keep-local">Garder cet appareil</button>
+  <button id="conflict-keep-remote">Garder le serveur</button>
 </div>
 
 <!-- ── JOURNAL ── -->
@@ -471,6 +537,9 @@
 <script src="js/storage-adapter.js"></script>
 <script src="js/remote-source.js"></script>
 <script src="js/journal-operations.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/supabase-sync.js"></script>
 
 <script>
 /* ═══════════════════════════════════════
@@ -488,19 +557,36 @@ let panelOpen = false;
 let editingIdx = null;   // null = add mode, number = edit mode
 let allCollapsed = false;
 let dragSrc = null;
+let supabaseClient = null;
+let syncClient = null;
+let currentUser = null;
+let syncReady = false;
+let syncInFlight = false;
+let syncTimer = null;
+let localChangeId = 0;
+let pendingConflict = null;
+let deferredRemoteRow = null;
 
 function load() { return storageAdapter.load(); }
-function save() { storageAdapter.save(data); }
-// Charge data.json (source distante d'initialisation, cf. js/remote-source.js)
-// et fusionne dans `data` selon la règle actuelle (cf. js/data-core.js
-// mergeRemoteIntoLocal : remote écrase local pour les semaines communes).
-async function loadRemote() {
+function save() {
+  storageAdapter.save(data);
+  if (!currentUser) return;
+  localChangeId += 1;
+  const meta = storageAdapter.loadSyncMeta();
+  storageAdapter.saveSyncMeta({
+    revision: syncClient ? syncClient.getRevision() : meta.revision,
+    dirty: true,
+    ownerId: currentUser.id
+  });
+  scheduleSync();
+}
+
+// data.json ne sert plus que de graine lors de la toute première migration.
+async function loadPublishedSeed() {
   const remote = await CJRemote.fetchRemoteData('data.json');
-  if (!remote) return; // offline ou dev local, comportement inchangé
+  if (!remote) return data;
   CJData.mergeRemoteIntoLocal(data, CJSchema.migrate(remote));
-  save();
-  renderJournal();
-  if (panelOpen) { renderDayTabs(); renderBlocks(); }
+  return data;
 }
 
 function weekKey(offset = weekOffset) { return CJData.weekKey(offset); }
@@ -613,6 +699,159 @@ function toast(msg, ms = 2000) {
   t.classList.add('show');
   clearTimeout(t._t);
   t._t = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+/* ═══════════════════════════════════════
+   AUTHENTIFICATION & SYNCHRONISATION
+═══════════════════════════════════════ */
+function setSyncStatus(label) {
+  document.getElementById('sync-status').textContent = label;
+}
+
+function showAuth(message = '') {
+  document.getElementById('auth-message').textContent = message;
+  document.getElementById('auth-screen').classList.remove('hidden');
+  document.body.classList.remove('authenticated');
+}
+
+function hideAuth() {
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.body.classList.add('authenticated');
+}
+
+function applyRemoteRow(row) {
+  data = CJSchema.migrate(row.data);
+  storageAdapter.save(data);
+  storageAdapter.saveSyncMeta({ revision: row.revision, dirty: false, ownerId: currentUser.id });
+  syncClient.setRevision(row.revision);
+  update(false);
+}
+
+function showConflict(row) {
+  if (pendingConflict && pendingConflict.revision >= row.revision) return;
+  storageAdapter.saveConflict(data);
+  pendingConflict = row;
+  syncReady = false;
+  setSyncStatus('Conflit');
+  document.getElementById('sync-conflict').classList.add('visible');
+}
+
+function hideConflict() {
+  pendingConflict = null;
+  document.getElementById('sync-conflict').classList.remove('visible');
+}
+
+async function handleRemoteRow(row) {
+  if (!row || row.revision <= syncClient.getRevision()) return;
+  if (syncInFlight) {
+    deferredRemoteRow = row;
+    return;
+  }
+  const meta = storageAdapter.loadSyncMeta();
+  if (meta.dirty) showConflict(row);
+  else applyRemoteRow(row);
+}
+
+function scheduleSync(delay = 250) {
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(flushSync, delay);
+}
+
+async function flushSync() {
+  if (!syncReady || syncInFlight || pendingConflict || !currentUser) return;
+  const meta = storageAdapter.loadSyncMeta();
+  if (!meta.dirty) return;
+  syncInFlight = true;
+  const generation = localChangeId;
+  const snapshot = CJSchema.clone(data);
+  setSyncStatus('Synchronisation…');
+  try {
+    const result = await syncClient.save(snapshot, meta.revision);
+    if (result.status === 'conflict') {
+      const remote = await syncClient.fetchCurrent();
+      showConflict(remote);
+      return;
+    }
+    const stillDirty = generation !== localChangeId;
+    storageAdapter.saveSyncMeta({ revision: result.row.revision, dirty: stillDirty, ownerId: currentUser.id });
+    setSyncStatus(stillDirty ? 'À synchroniser' : 'Synchronisé');
+    if (stillDirty) scheduleSync(0);
+  } catch (error) {
+    setSyncStatus('Hors ligne');
+  } finally {
+    syncInFlight = false;
+    if (deferredRemoteRow) {
+      const row = deferredRemoteRow;
+      deferredRemoteRow = null;
+      handleRemoteRow(row);
+    }
+  }
+}
+
+async function connectSync() {
+  setSyncStatus('Connexion…');
+  let session;
+  try {
+    session = await syncClient.getSession();
+  } catch (error) {
+    showAuth('Connexion à Supabase momentanément indisponible.');
+    setSyncStatus('Hors ligne');
+    return;
+  }
+  if (!session || !session.user) {
+    showAuth();
+    setSyncStatus('Connexion requise');
+    return;
+  }
+  currentUser = session.user;
+
+  try {
+    const remote = await syncClient.fetchCurrent();
+    const meta = storageAdapter.loadSyncMeta();
+    hideAuth();
+
+    if (!remote) {
+      storageAdapter.backupBeforeRemoteMigration();
+      if (CJSupabaseSync.shouldSeedFromPublished(data)) await loadPublishedSeed();
+      const initialized = await syncClient.initialize(data);
+      applyRemoteRow(initialized);
+    } else if (meta.dirty && meta.ownerId === currentUser.id && Number.isInteger(meta.revision)) {
+      if (meta.revision === remote.revision) {
+        syncClient.setRevision(remote.revision);
+        syncReady = true;
+        await flushSync();
+      } else {
+        syncClient.setRevision(remote.revision);
+        showConflict(remote);
+      }
+    } else {
+      applyRemoteRow(remote);
+    }
+
+    if (!pendingConflict) {
+      syncReady = true;
+      setSyncStatus('Synchronisé');
+    }
+    syncClient.subscribe(handleRemoteRow);
+  } catch (error) {
+    hideAuth();
+    syncReady = false;
+    setSyncStatus('Hors ligne');
+  }
+}
+
+async function initializeSupabase() {
+  const config = window.CJSupabaseConfig || {};
+  if (!window.supabase || !config.url || !config.publishableKey || config.publishableKey.startsWith('__')) {
+    showAuth('Configuration Supabase incomplète.');
+    setSyncStatus('Non configuré');
+    return;
+  }
+  supabaseClient = window.supabase.createClient(config.url, config.publishableKey, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+  });
+  syncClient = CJSupabaseSync.createSyncClient(supabaseClient);
+  await connectSync();
 }
 
 /* ═══════════════════════════════════════
@@ -970,6 +1209,71 @@ function copyPrevWeek() {
 /* ═══════════════════════════════════════
    EVENTS
 ═══════════════════════════════════════ */
+document.getElementById('auth-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!syncClient) return;
+  const button = document.getElementById('auth-submit');
+  const message = document.getElementById('auth-message');
+  button.disabled = true;
+  message.textContent = '';
+  try {
+    const config = window.CJSupabaseConfig || {};
+    await syncClient.sendMagicLink(
+      document.getElementById('auth-email').value.trim(),
+      config.siteUrl || window.location.href.split('#')[0]
+    );
+    message.style.color = '#166534';
+    message.textContent = 'Lien envoyé. Ouvrez votre e-mail sur cet appareil.';
+  } catch (error) {
+    message.style.color = '';
+    message.textContent = 'Envoi impossible pour le moment. Réessayez dans quelques instants.';
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.getElementById('btn-sign-out').addEventListener('click', async () => {
+  if (!syncClient) return;
+  syncClient.disconnect();
+  await syncClient.signOut();
+  currentUser = null;
+  syncReady = false;
+  closePanel();
+  setSyncStatus('Déconnecté');
+  showAuth();
+});
+
+document.getElementById('conflict-keep-local').addEventListener('click', async () => {
+  if (!pendingConflict) return;
+  const remoteRevision = pendingConflict.revision;
+  hideConflict();
+  syncClient.setRevision(remoteRevision);
+  storageAdapter.saveSyncMeta({ revision: remoteRevision, dirty: true, ownerId: currentUser.id });
+  syncReady = true;
+  setSyncStatus('Synchronisation…');
+  await flushSync();
+});
+
+document.getElementById('conflict-keep-remote').addEventListener('click', () => {
+  if (!pendingConflict) return;
+  const remote = pendingConflict;
+  hideConflict();
+  applyRemoteRow(remote);
+  syncReady = true;
+  setSyncStatus('Synchronisé');
+});
+
+window.addEventListener('offline', () => {
+  syncReady = false;
+  setSyncStatus('Hors ligne');
+});
+window.addEventListener('online', () => {
+  if (syncClient && !pendingConflict) connectSync();
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && syncClient && currentUser && !pendingConflict) connectSync();
+});
+
 document.getElementById('btn-toggle-edit').addEventListener('click', () => panelOpen ? closePanel() : openPanel());
 document.getElementById('btn-close-panel').addEventListener('click', closePanel);
 document.getElementById('overlay').addEventListener('click', closePanel);
@@ -1048,9 +1352,9 @@ document.getElementById('btn-clear-day').addEventListener('click', () => {
 /* ═══════════════════════════════════════
    INIT
 ═══════════════════════════════════════ */
-function update() {
+function update(reloadLocal = true) {
   document.getElementById('week-label').textContent = weekLabel(weekKey());
-  data = load();
+  if (reloadLocal) data = load();
   renderJournal();
   if (panelOpen) { renderDayTabs(); renderBlocks(); }
 }
@@ -1058,7 +1362,7 @@ function update() {
 data = load();
 buildQuickChips();
 update();
-loadRemote(); // merge server data.json on top
+initializeSupabase();
 </script>
 </body>
 </html>

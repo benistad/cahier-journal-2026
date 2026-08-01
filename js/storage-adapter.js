@@ -19,6 +19,9 @@
 
   const STORAGE_KEY = 'cj_data';
   const PRE_MIGRATION_BACKUP_KEY = 'cj_data_before_schema_v2';
+  const PRE_REMOTE_BACKUP_KEY = 'cj_data_before_supabase';
+  const SYNC_META_KEY = 'cj_sync_meta';
+  const CONFLICT_PREFIX = 'cj_conflict_';
 
   function createLocalStorageAdapter(storageImpl) {
     const ls = storageImpl || (typeof localStorage !== 'undefined' ? localStorage : null);
@@ -42,6 +45,39 @@
       // Identique à l'ancien save().
       save(data) {
         ls.setItem(STORAGE_KEY, JSON.stringify(data));
+      },
+
+      backupBeforeRemoteMigration() {
+        if (ls.getItem(PRE_REMOTE_BACKUP_KEY) !== null) return false;
+        ls.setItem(PRE_REMOTE_BACKUP_KEY, ls.getItem(STORAGE_KEY) || '{}');
+        return true;
+      },
+
+      saveConflict(data, timestamp = Date.now()) {
+        const key = `${CONFLICT_PREFIX}${timestamp}`;
+        ls.setItem(key, JSON.stringify(data));
+        return key;
+      },
+
+      loadSyncMeta() {
+        try {
+          const value = JSON.parse(ls.getItem(SYNC_META_KEY) || '{}');
+          return {
+            revision: Number.isInteger(value.revision) ? value.revision : null,
+            dirty: value.dirty === true,
+            ownerId: typeof value.ownerId === 'string' ? value.ownerId : null
+          };
+        } catch {
+          return { revision: null, dirty: false, ownerId: null };
+        }
+      },
+
+      saveSyncMeta(meta) {
+        ls.setItem(SYNC_META_KEY, JSON.stringify({
+          revision: Number.isInteger(meta.revision) ? meta.revision : null,
+          dirty: meta.dirty === true,
+          ownerId: typeof meta.ownerId === 'string' ? meta.ownerId : null
+        }));
       },
 
       // Identique au cœur de l'ancien exportJSON() (sans le téléchargement,
@@ -70,5 +106,12 @@
     };
   }
 
-  return { STORAGE_KEY, PRE_MIGRATION_BACKUP_KEY, createLocalStorageAdapter };
+  return {
+    STORAGE_KEY,
+    PRE_MIGRATION_BACKUP_KEY,
+    PRE_REMOTE_BACKUP_KEY,
+    SYNC_META_KEY,
+    CONFLICT_PREFIX,
+    createLocalStorageAdapter
+  };
 });
