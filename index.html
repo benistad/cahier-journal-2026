@@ -954,12 +954,12 @@ function renderAssistantPreview(proposal) {
     if (item.documents.length) {
       const documents = document.createElement('div');
       documents.className = 'assistant-preview-docs';
-      item.documents.forEach(document => {
+      item.documents.forEach(associatedDocument => {
         const link = document.createElement('a');
-        link.href = document.url;
+        link.href = associatedDocument.url;
         link.target = '_blank';
         link.rel = 'noopener';
-        link.textContent = document.title;
+        link.textContent = associatedDocument.title;
         documents.appendChild(link);
       });
       card.appendChild(documents);
