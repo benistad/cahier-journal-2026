@@ -20,9 +20,21 @@ function fakeClient(options = {}) {
     calls,
     auth: {
       getSession: async () => ({ data: { session: options.session === null ? null : { user } }, error: null }),
-      signInWithOtp: async credentials => {
-        calls.push(['magicLink', credentials]);
+      signInWithPassword: async credentials => {
+        calls.push(['passwordSignIn', credentials]);
         return { data: { session: { user } }, error: options.signInError || null };
+      },
+      resetPasswordForEmail: async (email, resetOptions) => {
+        calls.push(['passwordReset', email, resetOptions]);
+        return { data: {}, error: options.resetError || null };
+      },
+      updateUser: async attributes => {
+        calls.push(['updateUser', attributes]);
+        return { data: { user }, error: options.updateError || null };
+      },
+      onAuthStateChange: callback => {
+        calls.push(['authListener', callback]);
+        return { data: { subscription: { unsubscribe() {} } } };
       },
       signOut: async () => ({ error: null })
     },
@@ -64,6 +76,13 @@ test('data.json ne sert de graine que si aucun cahier local n’existe', () => {
   assert.equal(CJSupabaseSync.shouldSeedFromPublished(journal()), false);
 });
 
+test('le lien de récupération revient sur l’écran de choix du mot de passe', () => {
+  assert.equal(
+    CJSupabaseSync.passwordRecoveryUrl('https://example.test/journal/'),
+    'https://example.test/journal/?mode=password-recovery'
+  );
+});
+
 test('fetchCurrent filtre explicitement sur l’utilisateur connecté', async () => {
   const client = fakeClient({ remoteRow: { owner_id: 'user-1', revision: 2, data: journal(), updated_at: 'date' } });
   const sync = CJSupabaseSync.createSyncClient(client);
@@ -72,14 +91,29 @@ test('fetchCurrent filtre explicitement sur l’utilisateur connecté', async ()
   assert.deepEqual(client.calls[0].slice(3), ['owner_id', 'user-1']);
 });
 
-test('le lien de connexion ne peut pas créer un autre utilisateur', async () => {
+test('la connexion utilise le mail et le mot de passe fournis', async () => {
   const client = fakeClient();
   const sync = CJSupabaseSync.createSyncClient(client);
-  await sync.sendMagicLink('owner@example.test', 'https://example.test/journal/');
-  assert.deepEqual(client.calls[0], ['magicLink', {
-    email: 'owner@example.test',
-    options: { shouldCreateUser: false, emailRedirectTo: 'https://example.test/journal/' }
+  await sync.signInWithPassword('owner@example.test', 'mot-de-passe-test');
+  assert.deepEqual(client.calls[0], ['passwordSignIn', {
+    email: 'owner@example.test', password: 'mot-de-passe-test'
   }]);
+});
+
+test('la première connexion envoie un seul lien de définition du mot de passe', async () => {
+  const client = fakeClient();
+  const sync = CJSupabaseSync.createSyncClient(client);
+  await sync.requestPasswordReset('owner@example.test', 'https://example.test/journal/?mode=password-recovery');
+  assert.deepEqual(client.calls[0], ['passwordReset', 'owner@example.test', {
+    redirectTo: 'https://example.test/journal/?mode=password-recovery'
+  }]);
+});
+
+test('le nouveau mot de passe est transmis uniquement à Supabase Auth', async () => {
+  const client = fakeClient();
+  const sync = CJSupabaseSync.createSyncClient(client);
+  await sync.updatePassword('nouveau-mot-de-passe');
+  assert.deepEqual(client.calls[0], ['updateUser', { password: 'nouveau-mot-de-passe' }]);
 });
 
 test('initialize envoie uniquement le schéma courant et mémorise la révision', async () => {

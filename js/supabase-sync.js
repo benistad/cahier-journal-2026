@@ -25,6 +25,12 @@
     return Object.keys(journal.weeks).length === 0;
   }
 
+  function passwordRecoveryUrl(siteUrl) {
+    const url = new URL(siteUrl);
+    url.searchParams.set('mode', 'password-recovery');
+    return url.toString();
+  }
+
   function createSyncClient(client) {
     if (!client) throw new Error('Client Supabase requis');
     let revision = null;
@@ -37,13 +43,27 @@
       return response.data.session || null;
     }
 
-    async function sendMagicLink(email, redirectTo) {
-      const response = await client.auth.signInWithOtp({
-        email,
-        options: { shouldCreateUser: false, emailRedirectTo: redirectTo }
-      });
+    async function signInWithPassword(email, password) {
+      const response = await client.auth.signInWithPassword({ email, password });
       if (response.error) throw response.error;
       return response.data;
+    }
+
+    async function requestPasswordReset(email, redirectTo) {
+      const response = await client.auth.resetPasswordForEmail(email, { redirectTo });
+      if (response.error) throw response.error;
+      return response.data;
+    }
+
+    async function updatePassword(password) {
+      const response = await client.auth.updateUser({ password });
+      if (response.error) throw response.error;
+      return response.data;
+    }
+
+    function onAuthStateChange(callback) {
+      const response = client.auth.onAuthStateChange(callback);
+      return response.data.subscription;
     }
 
     async function signOut() {
@@ -118,7 +138,10 @@
 
     return {
       getSession,
-      sendMagicLink,
+      signInWithPassword,
+      requestPasswordReset,
+      updatePassword,
+      onAuthStateChange,
       signOut,
       fetchCurrent,
       initialize,
@@ -130,5 +153,5 @@
     };
   }
 
-  return { normalizeRow, isConflictError, shouldSeedFromPublished, createSyncClient };
+  return { normalizeRow, isConflictError, shouldSeedFromPublished, passwordRecoveryUrl, createSyncClient };
 });
