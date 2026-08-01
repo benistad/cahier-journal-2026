@@ -52,7 +52,9 @@
     .btn-primary.on { background: #16a34a; }
     .sync-status { font-size: .68rem; opacity: .8; white-space: nowrap; }
     #btn-sign-out { display: none; }
+    #btn-drive { display: none; }
     body.authenticated #btn-sign-out { display: flex; }
+    body.authenticated #btn-drive { display: flex; }
 
     /* ── AUTHENTIFICATION ── */
     #auth-screen {
@@ -101,6 +103,28 @@
       border: 1px solid #fb923c; background: #fff; color: #9a3412;
       border-radius: 5px; padding: 4px 8px; cursor: pointer; font-weight: 600;
     }
+
+    /* ── GOOGLE DRIVE ── */
+    #drive-modal {
+      position: fixed; inset: 0; z-index: 950; background: rgba(15,23,42,.42);
+      display: flex; align-items: center; justify-content: center; padding: 18px;
+    }
+    #drive-modal[hidden] { display: none; }
+    .drive-card {
+      width: min(560px, 100%); max-height: min(720px, 92vh); overflow: auto;
+      background: #fff; border-radius: 12px; box-shadow: 0 18px 50px rgba(15,23,42,.28); padding: 20px;
+    }
+    .drive-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .drive-head h2 { font-size: 1.05rem; color: var(--panel-bg); }
+    .drive-status { margin: 12px 0; padding: 10px; border-radius: 7px; background: #f3f4f6; font-size: .78rem; line-height: 1.45; }
+    .drive-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .drive-search { margin-top: 16px; }
+    .drive-search input { width: 100%; padding: 9px; border: 1px solid #d1d5db; border-radius: 7px; font: inherit; }
+    .drive-results { display: grid; gap: 7px; margin-top: 10px; }
+    .drive-result { display: block; border: 1px solid #e5e7eb; border-radius: 7px; padding: 9px; text-decoration: none; color: #1f2937; }
+    .drive-result:hover { background: #f8fafc; }
+    .drive-result strong { display: block; font-size: .8rem; }
+    .drive-result span { display: block; color: #6b7280; font-size: .7rem; margin-top: 3px; }
 
     /* ── MAIN ── */
     .container { max-width: 800px; margin: 0 auto; padding: 20px 14px 80px; transition: margin-right .25s ease; }
@@ -438,6 +462,7 @@
   </div>
   <div class="top-actions">
     <span class="sync-status" id="sync-status">Connexion…</span>
+    <button class="icon-btn" id="btn-drive" title="Google Drive pédagogique">☁️</button>
     <button class="icon-btn" id="btn-sign-out" title="Se déconnecter">↪</button>
     <button class="icon-btn" id="btn-collapse" title="Tout replier / déplier">⊟</button>
     <button class="btn-primary" id="btn-toggle-edit">✏️ Éditer</button>
@@ -448,6 +473,25 @@
   <span>Une autre version existe sur le serveur. Une copie locale de récupération a été conservée.</span>
   <button id="conflict-keep-local">Garder cet appareil</button>
   <button id="conflict-keep-remote">Garder le serveur</button>
+</div>
+
+<div id="drive-modal" hidden role="dialog" aria-modal="true" aria-labelledby="drive-title">
+  <div class="drive-card">
+    <div class="drive-head">
+      <h2 id="drive-title">☁️ Google Drive pédagogique</h2>
+      <button class="icon-btn" id="drive-close" title="Fermer">✕</button>
+    </div>
+    <div class="drive-status" id="drive-status">Vérification de la connexion…</div>
+    <div class="drive-actions">
+      <button class="btn-primary" id="drive-connect">Connecter Google Drive</button>
+      <button class="btn-primary" id="drive-sync" hidden>Actualiser le catalogue</button>
+    </div>
+    <div class="drive-search" id="drive-search-area" hidden>
+      <label for="drive-search-input">Rechercher un document</label>
+      <input id="drive-search-input" type="search" placeholder="Ex. présent, Moyen Âge, multiplier…">
+      <div class="drive-results" id="drive-results"></div>
+    </div>
+  </div>
 </div>
 
 <!-- ── JOURNAL ── -->
@@ -555,6 +599,8 @@
 <script src="js/storage-adapter.js"></script>
 <script src="js/remote-source.js"></script>
 <script src="js/journal-operations.js"></script>
+<script src="js/drive-catalog.js"></script>
+<script src="js/drive-client.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
 <script src="js/supabase-sync.js"></script>
@@ -586,6 +632,8 @@ let pendingConflict = null;
 let deferredRemoteRow = null;
 let authMode = 'login';
 let authSubscription = null;
+let driveClient = null;
+let driveStatus = null;
 
 function load() { return storageAdapter.load(); }
 function save() {
@@ -757,6 +805,81 @@ function showPasswordSetup(message = '') {
   showAuth(message);
 }
 
+function setDriveMessage(message) {
+  document.getElementById('drive-status').textContent = message;
+}
+
+function renderDriveResults(query) {
+  const container = document.getElementById('drive-results');
+  container.innerHTML = '';
+  if (!query.trim()) return;
+  const results = driveClient.search(query, { limit: 5 });
+  if (!results.length) {
+    container.textContent = 'Aucun document réel ne correspond.';
+    return;
+  }
+  results.forEach(candidate => {
+    const link = document.createElement('a');
+    link.className = 'drive-result';
+    link.href = candidate.url;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    const title = document.createElement('strong');
+    title.textContent = candidate.title;
+    const details = document.createElement('span');
+    details.textContent = [candidate.subject, candidate.notion, candidate.sequence, candidate.role].filter(Boolean).join(' · ');
+    link.append(title, details);
+    container.appendChild(link);
+  });
+}
+
+async function refreshDrivePanel() {
+  if (!driveClient || !currentUser) return;
+  try {
+    driveStatus = await driveClient.status();
+    const connected = driveStatus.connected === true;
+    document.getElementById('drive-connect').hidden = connected;
+    document.getElementById('drive-sync').hidden = !connected;
+    document.getElementById('drive-search-area').hidden = !connected;
+    if (!connected) {
+      setDriveMessage('Drive n’est pas encore connecté. L’accès demandé sera strictement en lecture seule.');
+      return;
+    }
+    setDriveMessage(`${driveStatus.indexed_file_count || 0} document(s) indexé(s)${driveStatus.google_email ? ` · ${driveStatus.google_email}` : ''}${driveStatus.last_error ? ` · Dernière erreur : ${driveStatus.last_error}` : ''}`);
+    await driveClient.loadCatalog();
+  } catch (error) {
+    setDriveMessage('Catalogue Drive momentanément indisponible.');
+  }
+}
+
+async function runDriveSync() {
+  const button = document.getElementById('drive-sync');
+  button.disabled = true;
+  setDriveMessage('Lecture et classement du dossier autorisé…');
+  try {
+    const result = await driveClient.sync();
+    await refreshDrivePanel();
+    toast(`${result.indexedFileCount} document(s) Drive indexé(s) ✓`);
+  } catch (error) {
+    setDriveMessage('Synchronisation Drive impossible pour le moment.');
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function initializeDrive() {
+  if (!driveClient || !currentUser) return;
+  const returnStatus = new URLSearchParams(window.location.search).get('drive');
+  await refreshDrivePanel();
+  if (returnStatus) {
+    const config = window.CJSupabaseConfig || {};
+    if (config.siteUrl) window.history.replaceState({}, '', config.siteUrl);
+    document.getElementById('drive-modal').hidden = false;
+    if (returnStatus === 'connected') await runDriveSync();
+    else setDriveMessage('Google Drive n’a pas pu être connecté.');
+  }
+}
+
 function applyRemoteRow(row) {
   data = CJSchema.migrate(row.data);
   storageAdapter.save(data);
@@ -871,6 +994,7 @@ async function connectSync() {
       setSyncStatus('Synchronisé');
     }
     syncClient.subscribe(handleRemoteRow);
+    initializeDrive();
   } catch (error) {
     hideAuth();
     syncReady = false;
@@ -891,6 +1015,7 @@ async function initializeSupabase() {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
   });
   syncClient = CJSupabaseSync.createSyncClient(supabaseClient);
+  driveClient = CJDriveClient.createDriveClient(supabaseClient);
   authSubscription = syncClient.onAuthStateChange((event, session) => {
     if (event === 'PASSWORD_RECOVERY') {
       currentUser = session && session.user ? session.user : null;
@@ -1329,8 +1454,35 @@ document.getElementById('btn-sign-out').addEventListener('click', async () => {
   currentUser = null;
   syncReady = false;
   closePanel();
+  document.getElementById('drive-modal').hidden = true;
   setSyncStatus('Déconnecté');
   showLoginForm();
+});
+
+document.getElementById('btn-drive').addEventListener('click', async () => {
+  document.getElementById('drive-modal').hidden = false;
+  await refreshDrivePanel();
+});
+document.getElementById('drive-close').addEventListener('click', () => {
+  document.getElementById('drive-modal').hidden = true;
+});
+document.getElementById('drive-modal').addEventListener('click', event => {
+  if (event.target.id === 'drive-modal') document.getElementById('drive-modal').hidden = true;
+});
+document.getElementById('drive-connect').addEventListener('click', async () => {
+  const button = document.getElementById('drive-connect');
+  button.disabled = true;
+  setDriveMessage('Préparation de la connexion Google en lecture seule…');
+  try {
+    window.location.assign(await driveClient.startOAuth());
+  } catch (error) {
+    setDriveMessage('Connexion Google Drive indisponible.');
+    button.disabled = false;
+  }
+});
+document.getElementById('drive-sync').addEventListener('click', runDriveSync);
+document.getElementById('drive-search-input').addEventListener('input', event => {
+  renderDriveResults(event.target.value);
 });
 
 document.getElementById('conflict-keep-local').addEventListener('click', async () => {

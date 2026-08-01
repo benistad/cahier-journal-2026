@@ -1,0 +1,10 @@
+project_id = "gdczzsuyezugqecjwskj"
+
+[functions.drive-auth-start]
+verify_jwt = true
+
+[functions.drive-auth-callback]
+verify_jwt = false
+
+[functions.drive-sync]
+verify_jwt = true
