@@ -141,35 +141,73 @@
     }
     #assistant-modal[hidden] { display: none; }
     .assistant-card {
-      width: min(660px, 100%); max-height: min(820px, 94vh); overflow: auto;
-      background: #fff; border-radius: 14px; box-shadow: 0 20px 55px rgba(15,23,42,.3); padding: 20px;
+      width: min(1040px, 100%); height: min(760px, 94vh); overflow: hidden;
+      background: #fff; border-radius: 18px; box-shadow: 0 24px 70px rgba(15,23,42,.34);
+      display: flex; flex-direction: column;
     }
-    .assistant-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .assistant-head h2 { font-size: 1.08rem; color: var(--panel-bg); }
-    .assistant-context { display: flex; align-items: end; gap: 10px; margin: 14px 0 10px; flex-wrap: wrap; }
-    .assistant-context label { display: grid; gap: 4px; color: #4b5563; font-size: .72rem; font-weight: 700; }
-    .assistant-context select { border: 1px solid #d1d5db; border-radius: 7px; padding: 7px 9px; background: #fff; font: inherit; }
-    #assistant-week-label { color: #6b7280; font-size: .75rem; padding-bottom: 8px; }
-    .assistant-history { display: grid; gap: 8px; margin: 10px 0; }
-    .assistant-bubble { max-width: 88%; border-radius: 10px; padding: 9px 11px; font-size: .79rem; line-height: 1.45; white-space: pre-wrap; }
-    .assistant-bubble.bot { background: #eef2ff; color: #27345e; }
-    .assistant-bubble.user { background: #e8f4ea; color: #14532d; margin-left: auto; }
-    .assistant-privacy { color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 7px; padding: 8px 9px; font-size: .7rem; line-height: 1.4; }
-    #assistant-narrative { width: 100%; min-height: 112px; resize: vertical; margin-top: 10px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; line-height: 1.45; }
-    #assistant-narrative:focus { outline: 2px solid #c7d2fe; border-color: var(--accent); }
+    .assistant-head { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; background: var(--panel-bg); color: #fff; }
+    .assistant-head h2 { font-size: 1.08rem; color: #fff; margin: 0; }
+    .assistant-head p { margin: 3px 0 0; color: #cbd5e1; font-size: .72rem; }
+    .assistant-head .icon-btn { color: #fff; border-color: rgba(255,255,255,.25); }
+    .assistant-context { min-height: 58px; display: flex; align-items: center; gap: 12px; padding: 9px 18px; flex-wrap: wrap; border-bottom: 1px solid #e5e7eb; background: #f8fafc; }
+    .assistant-context label { display: flex; align-items: center; gap: 7px; color: #475569; font-size: .72rem; font-weight: 700; }
+    .assistant-context select { border: 1px solid #cbd5e1; border-radius: 8px; padding: 7px 30px 7px 9px; background: #fff; font: inherit; }
+    #assistant-week-label { color: #64748b; font-size: .75rem; }
+    #assistant-reset { margin-left: auto; border: 0; background: transparent; color: #475569; cursor: pointer; font-size: .72rem; font-weight: 700; padding: 7px 4px; }
+    #assistant-reset:hover { color: var(--accent); }
+    .assistant-workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, .92fr); flex: 1; min-height: 0; }
+    .assistant-conversation { min-height: 0; display: flex; flex-direction: column; border-right: 1px solid #e5e7eb; background: #fff; }
+    .assistant-history { flex: 1; min-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 18px; background: linear-gradient(#fff, #fbfdff); }
+    .assistant-bubble { max-width: 88%; border-radius: 14px; padding: 10px 12px; font-size: .79rem; line-height: 1.48; white-space: pre-wrap; box-shadow: 0 1px 2px rgba(15,23,42,.05); }
+    .assistant-bubble.bot { background: #eef2ff; color: #27345e; border-bottom-left-radius: 4px; }
+    .assistant-bubble.user { background: #e8f4ea; color: #14532d; margin-left: auto; border-bottom-right-radius: 4px; }
+    .assistant-composer { border-top: 1px solid #e5e7eb; padding: 12px 14px 13px; background: #fff; }
+    .assistant-privacy { color: #78716c; font-size: .66rem; line-height: 1.35; margin-bottom: 7px; }
+    #assistant-narrative { width: 100%; min-height: 92px; max-height: 190px; resize: vertical; padding: 11px 12px; border: 1px solid #cbd5e1; border-radius: 11px; font: inherit; line-height: 1.45; background: #fff; }
+    #assistant-narrative:focus { outline: 3px solid #e0e7ff; border-color: var(--accent); }
     .assistant-compose-actions, .assistant-preview-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 9px; }
-    #assistant-status { color: #6b7280; font-size: .72rem; line-height: 1.4; min-height: 18px; }
-    #assistant-preview { margin-top: 16px; border-top: 1px solid #e5e7eb; padding-top: 14px; }
+    .assistant-compose-actions .btn-primary { margin-left: auto; }
+    .assistant-shortcut { color: #94a3b8; font-size: .64rem; }
+    #assistant-status { color: #64748b; font-size: .69rem; line-height: 1.4; min-height: 18px; }
+    .assistant-draft { min-height: 0; overflow-y: auto; padding: 18px; background: #f8fafc; }
+    .assistant-draft-title { font-size: .92rem; color: var(--panel-bg); margin: 0 0 4px; }
+    .assistant-draft-note { color: #64748b; font-size: .7rem; margin-bottom: 14px; }
+    .assistant-empty-preview { height: calc(100% - 48px); min-height: 230px; display: grid; place-items: center; text-align: center; color: #64748b; padding: 28px; border: 1px dashed #cbd5e1; border-radius: 12px; background: rgba(255,255,255,.72); }
+    .assistant-empty-preview[hidden] { display: none; }
+    .assistant-empty-preview strong { display: block; color: #334155; margin-bottom: 5px; }
+    .assistant-empty-preview span { font-size: .74rem; line-height: 1.5; }
+    #assistant-preview { margin-top: 0; }
     #assistant-preview[hidden] { display: none; }
-    #assistant-preview h3 { font-size: .9rem; color: var(--panel-bg); margin-bottom: 5px; }
-    #assistant-preview-summary { color: #4b5563; font-size: .76rem; margin-bottom: 9px; }
-    .assistant-preview-list { display: grid; gap: 8px; }
-    .assistant-preview-item { border: 1px solid #dbe2ea; border-radius: 8px; padding: 9px 10px; background: #fafbfc; }
+    #assistant-preview h3 { font-size: .9rem; color: var(--panel-bg); margin: 0 0 5px; }
+    #assistant-preview-summary { color: #475569; font-size: .74rem; line-height: 1.45; margin-bottom: 12px; }
+    .assistant-preview-list { display: grid; gap: 9px; }
+    .assistant-preview-item { position: relative; border: 1px solid #dbe2ea; border-radius: 10px; padding: 10px 11px 10px 42px; background: #fff; }
+    .assistant-preview-item::before { content: attr(data-position); position: absolute; left: 12px; top: 11px; width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; background: #e0e7ff; color: #3730a3; font-size: .65rem; font-weight: 800; }
+    .assistant-preview-item.break { padding: 9px 11px; text-align: center; background: var(--break-bg); border-color: var(--break-bd); color: var(--break-col); }
+    .assistant-preview-item.break::before { display: none; }
     .assistant-preview-item strong { display: block; color: #27345e; font-size: .8rem; }
-    .assistant-preview-item p { white-space: pre-wrap; font-size: .76rem; line-height: 1.4; margin-top: 4px; }
+    .assistant-preview-item.break strong { color: var(--break-col); letter-spacing: .05em; }
+    .assistant-preview-item p { white-space: pre-wrap; font-size: .74rem; line-height: 1.45; margin-top: 4px; color: #475569; }
     .assistant-preview-docs { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
     .assistant-preview-docs a { border: 1px solid #bfdbfe; background: #eff6ff; color: #1d4ed8; border-radius: 20px; padding: 3px 7px; font-size: .66rem; text-decoration: none; }
+    .assistant-preview-actions { position: sticky; bottom: -18px; margin: 14px -18px -18px; padding: 12px 18px 16px; background: linear-gradient(rgba(248,250,252,.75), #f8fafc 24%); }
     #assistant-apply { background: #15803d; }
+
+    @media (max-width: 760px) {
+      #assistant-modal { padding: 0; align-items: stretch; }
+      .assistant-card { width: 100%; height: 100dvh; max-height: none; border-radius: 0; }
+      .assistant-head { min-height: 62px; padding: 11px 14px; }
+      .assistant-context { padding: 8px 12px; gap: 8px; }
+      #assistant-reset { margin-left: 0; }
+      .assistant-workspace { display: flex; flex-direction: column; overflow-y: auto; }
+      .assistant-conversation { min-height: 480px; border-right: 0; border-bottom: 1px solid #e5e7eb; }
+      .assistant-history { min-height: 230px; max-height: 42vh; }
+      .assistant-draft { overflow: visible; }
+      .assistant-empty-preview { min-height: 150px; }
+      .assistant-shortcut { display: none; }
+      .assistant-preview-actions { position: static; margin: 14px 0 0; padding: 0; background: none; align-items: stretch; flex-direction: column; }
+      .assistant-preview-actions button { width: 100%; }
+    }
 
     /* ── MAIN ── */
     .container { max-width: 800px; margin: 0 auto; padding: 20px 14px 80px; transition: margin-right .25s ease; }
@@ -544,34 +582,50 @@
 <div id="assistant-modal" hidden role="dialog" aria-modal="true" aria-labelledby="assistant-title">
   <div class="assistant-card">
     <div class="assistant-head">
-      <h2 id="assistant-title">✨ Assistant du cahier journal</h2>
+      <div>
+        <h2 id="assistant-title">✨ Assistant du cahier journal</h2>
+        <p>Raconte ta journée, message après message.</p>
+      </div>
       <button class="icon-btn" id="assistant-close" title="Fermer">✕</button>
     </div>
     <div class="assistant-context">
-      <label for="assistant-day">Jour à compléter
+      <label for="assistant-day">Jour
         <select id="assistant-day">
           <option>Lundi</option><option>Mardi</option><option>Mercredi</option><option>Jeudi</option><option>Vendredi</option>
         </select>
       </label>
       <span id="assistant-week-label"></span>
+      <button id="assistant-reset" type="button">↻ Recommencer</button>
     </div>
-    <div class="assistant-history" id="assistant-history">
-      <div class="assistant-bubble bot">Raconte-moi simplement ce qui a été fait en classe. Je préparerai un aperçu avant toute modification.</div>
-    </div>
-    <div class="assistant-privacy">N’indique aucun nom d’élève ni donnée personnelle. Utilise par exemple « un élève » ou « un groupe ».</div>
-    <textarea id="assistant-narrative" maxlength="8000" placeholder="Ex. Ce matin, nous avons travaillé le présent en français. Les élèves ont repéré les verbes puis complété la trace écrite…"></textarea>
-    <div class="assistant-compose-actions">
-      <button class="btn-primary" id="assistant-propose">Préparer l’aperçu</button>
-      <span id="assistant-status" role="status"></span>
-    </div>
-    <div id="assistant-preview" hidden>
-      <h3>Aperçu — rien n’est encore enregistré</h3>
-      <div id="assistant-preview-summary"></div>
-      <div class="assistant-preview-list" id="assistant-preview-list"></div>
-      <div class="assistant-preview-actions">
-        <button class="btn-primary" id="assistant-apply">Appliquer au cahier</button>
-        <button class="btn-primary" id="assistant-revise">Modifier le récit</button>
-      </div>
+    <div class="assistant-workspace">
+      <section class="assistant-conversation" aria-label="Conversation">
+        <div class="assistant-history" id="assistant-history"></div>
+        <div class="assistant-composer">
+          <div class="assistant-privacy">🔒 Pas de nom d’élève ni de donnée personnelle. Dis plutôt « un élève » ou « un groupe ».</div>
+          <textarea id="assistant-narrative" maxlength="8000" placeholder="Ex. Rituels, puis EPS. Ensuite récréation, après la récré dictée du lundi…"></textarea>
+          <div class="assistant-compose-actions">
+            <span class="assistant-shortcut">⌘/Ctrl + Entrée pour envoyer</span>
+            <button class="btn-primary" id="assistant-propose">Envoyer</button>
+          </div>
+          <span id="assistant-status" role="status"></span>
+        </div>
+      </section>
+      <section class="assistant-draft" aria-label="Aperçu du cahier">
+        <h3 class="assistant-draft-title">Aperçu de la journée</h3>
+        <div class="assistant-draft-note" id="assistant-draft-note">Rien n’est enregistré avant ta validation.</div>
+        <div class="assistant-empty-preview" id="assistant-empty-preview">
+          <span><strong>Ton brouillon apparaîtra ici</strong>Tu peux parler naturellement : « puis », « après la récré », « finalement… ». Les pauses seront séparées des matières.</span>
+        </div>
+        <div id="assistant-preview" hidden>
+          <h3>Brouillon prêt à relire</h3>
+          <div id="assistant-preview-summary"></div>
+          <div class="assistant-preview-list" id="assistant-preview-list"></div>
+          <div class="assistant-preview-actions">
+            <button class="btn-primary" id="assistant-apply">Valider et ajouter au cahier</button>
+            <button class="btn-primary" id="assistant-revise">Ajouter une précision</button>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </div>
@@ -722,6 +776,7 @@ let openRouterUsageClient = null;
 let openRouterUsageTimer = null;
 let assistantClient = null;
 let assistantProposal = null;
+let assistantConversation = [];
 
 function load() { return storageAdapter.load(); }
 function save() {
@@ -921,15 +976,32 @@ function assistantMessage(kind, message) {
   const bubble = document.createElement('div');
   bubble.className = `assistant-bubble ${kind}`;
   bubble.textContent = message;
-  document.getElementById('assistant-history').appendChild(bubble);
+  const history = document.getElementById('assistant-history');
+  history.appendChild(bubble);
+  history.scrollTop = history.scrollHeight;
+  return bubble;
+}
+
+function resetAssistantSession() {
+  assistantProposal = null;
+  assistantConversation = [];
+  document.getElementById('assistant-preview').hidden = true;
+  document.getElementById('assistant-empty-preview').hidden = false;
+  document.getElementById('assistant-status').textContent = '';
+  document.getElementById('assistant-narrative').value = '';
+  document.getElementById('assistant-history').innerHTML = '';
+  const targetDay = document.getElementById('assistant-day').value;
+  const existingCount = getDayData(targetDay).blocks.length;
+  document.getElementById('assistant-draft-note').textContent = existingCount
+    ? `Le brouillon sera ajouté après les ${existingCount} bloc${existingCount > 1 ? 's' : ''} déjà présent${existingCount > 1 ? 's' : ''}. Rien ne change avant validation.`
+    : 'Rien n’est enregistré avant ta validation.';
+  assistantMessage('bot', 'Raconte-moi la journée dans l’ordre. Tu peux commencer par quelques activités, puis ajouter « après la récré… » ou corriger avec « finalement… ». Je mettrai à jour tout le brouillon.');
 }
 
 function openAssistant() {
-  assistantProposal = null;
-  document.getElementById('assistant-preview').hidden = true;
-  document.getElementById('assistant-status').textContent = '';
   document.getElementById('assistant-day').value = editDay;
   document.getElementById('assistant-week-label').textContent = `Semaine du ${weekLabel(weekKey())}`;
+  resetAssistantSession();
   document.getElementById('assistant-modal').hidden = false;
   document.getElementById('assistant-narrative').focus();
 }
@@ -943,14 +1015,19 @@ function renderAssistantPreview(proposal) {
   const list = document.getElementById('assistant-preview-list');
   list.innerHTML = '';
   document.getElementById('assistant-preview-summary').textContent = proposal.summary;
-  CJAssistant.previewItems(proposal).forEach(item => {
+  const items = CJAssistant.previewItems(proposal);
+  items.forEach((item, index) => {
     const card = document.createElement('div');
-    card.className = 'assistant-preview-item';
+    card.className = `assistant-preview-item${item.type === 'break' ? ' break' : ''}`;
+    card.dataset.position = String(index + 1);
     const title = document.createElement('strong');
-    title.textContent = `${item.day}${item.time ? ` · ${item.time}` : ''} — ${item.tag}`;
-    const content = document.createElement('p');
-    content.textContent = item.content;
-    card.append(title, content);
+    title.textContent = `${item.time ? `${item.time} · ` : ''}${item.tag}`;
+    card.appendChild(title);
+    if (item.content) {
+      const content = document.createElement('p');
+      content.textContent = item.content;
+      card.appendChild(content);
+    }
     if (item.documents.length) {
       const documents = document.createElement('div');
       documents.className = 'assistant-preview-docs';
@@ -966,6 +1043,8 @@ function renderAssistantPreview(proposal) {
     }
     list.appendChild(card);
   });
+  document.getElementById('assistant-empty-preview').hidden = true;
+  document.getElementById('assistant-apply').textContent = `Valider et ajouter ${items.length} bloc${items.length > 1 ? 's' : ''}`;
   preview.hidden = false;
 }
 
@@ -974,37 +1053,51 @@ async function requestAssistantProposal() {
   const narrative = document.getElementById('assistant-narrative').value.trim();
   const status = document.getElementById('assistant-status');
   const button = document.getElementById('assistant-propose');
-  if (narrative.length < 10) {
-    status.textContent = 'Raconte un peu plus précisément ce qui a été fait.';
+  if (narrative.length < 2) {
+    status.textContent = 'Écris au moins une activité ou une pause.';
     return;
   }
-  assistantProposal = null;
-  document.getElementById('assistant-preview').hidden = true;
-  assistantMessage('user', narrative);
+  if (assistantConversation.length >= 12) {
+    status.textContent = 'Ce brouillon est déjà très long : valide-le ou recommence une conversation.';
+    return;
+  }
+  const nextConversation = assistantConversation.concat(narrative);
+  const userBubble = assistantMessage('user', narrative);
+  let botBubble = null;
   button.disabled = true;
-  status.textContent = 'Je structure le récit et vérifie les documents réels…';
+  status.textContent = assistantConversation.length
+    ? 'Je mets à jour tout le brouillon…'
+    : 'Je structure la journée et vérifie les documents réels…';
   try {
     const response = await assistantClient.propose({
-      narrative,
+      conversation: nextConversation,
       weekKey: weekKey(),
       day: document.getElementById('assistant-day').value
     });
     assistantProposal = response.proposal;
     if (assistantProposal.clarificationNeeded) {
-      assistantMessage('bot', assistantProposal.clarificationQuestion);
-      status.textContent = 'Précise ta réponse dans le récit puis relance l’aperçu.';
+      botBubble = assistantMessage('bot', assistantProposal.clarificationQuestion);
+      document.getElementById('assistant-preview').hidden = true;
+      document.getElementById('assistant-empty-preview').hidden = false;
+      status.textContent = 'Réponds simplement dans un nouveau message.';
     } else {
-      assistantMessage('bot', assistantProposal.summary);
+      botBubble = assistantMessage('bot', assistantProposal.summary);
       renderAssistantPreview(assistantProposal);
       const cost = response.usage && typeof response.usage.cost === 'number'
         ? ` · coût ${CJOpenRouterUsage.formatDollars(response.usage.cost)}` : '';
       status.textContent = `${response.candidateCount} document(s) candidat(s) vérifié(s)${cost}`;
     }
+    assistantConversation = nextConversation;
+    document.getElementById('assistant-narrative').value = '';
     refreshOpenRouterUsage();
   } catch (error) {
+    userBubble.remove();
+    if (botBubble) botBubble.remove();
+    assistantProposal = null;
     status.textContent = 'La proposition n’a pas pu être préparée de façon fiable. Réessaie dans un instant.';
   } finally {
     button.disabled = false;
+    document.getElementById('assistant-narrative').focus();
   }
 }
 
@@ -1019,12 +1112,11 @@ function applyAssistantProposal() {
   save();
   update();
   const count = result.acceptedOperations.length;
-  assistantMessage('bot', `${count} activité(s) ajoutée(s) au cahier journal.`);
+  assistantMessage('bot', `${count} bloc(s) ajouté(s) au cahier journal.`);
   assistantProposal = null;
-  document.getElementById('assistant-preview').hidden = true;
-  document.getElementById('assistant-narrative').value = '';
   document.getElementById('assistant-status').textContent = 'Modifications enregistrées et synchronisées.';
-  toast(`${count} activité(s) ajoutée(s) ✓`);
+  toast(`${count} bloc(s) ajouté(s) ✓`);
+  closeAssistant();
 }
 
 function renderDriveResults(query) {
@@ -1332,7 +1424,7 @@ function renderJournal() {
         if (block.type === 'break') {
           const banner = document.createElement('div');
           banner.className = 'break-banner';
-          banner.textContent = block.label;
+          banner.textContent = `${block.time ? `${block.time} · ` : ''}${block.label}`;
           body.appendChild(banner);
         } else {
           const row = document.createElement('div');
@@ -1379,7 +1471,7 @@ function renderBlocks() {
 
     let inner = `<span class="b-handle">⠿</span>`;
     if (block.type === 'break') {
-      inner += `<span class="b-break">${block.label}</span><span class="b-preview"></span>`;
+      inner += `<span class="b-break">${block.time ? `${block.time} · ` : ''}${block.label}</span><span class="b-preview"></span>`;
     } else {
       const prev = (block.content || '').split('\n')[0].replace(/^[-–]\s*/, '').slice(0, 45);
       inner += `<span class="b-tag">${block.tag}</span><span class="b-preview">${prev || '—'}</span>`;
@@ -1716,9 +1808,15 @@ document.getElementById('assistant-modal').addEventListener('click', event => {
 });
 document.getElementById('assistant-propose').addEventListener('click', requestAssistantProposal);
 document.getElementById('assistant-apply').addEventListener('click', applyAssistantProposal);
+document.getElementById('assistant-reset').addEventListener('click', resetAssistantSession);
+document.getElementById('assistant-day').addEventListener('change', resetAssistantSession);
+document.getElementById('assistant-narrative').addEventListener('keydown', event => {
+  if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+    event.preventDefault();
+    requestAssistantProposal();
+  }
+});
 document.getElementById('assistant-revise').addEventListener('click', () => {
-  document.getElementById('assistant-preview').hidden = true;
-  assistantProposal = null;
   document.getElementById('assistant-narrative').focus();
 });
 

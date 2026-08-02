@@ -6,6 +6,8 @@
     root.CJAssistant = factory(root.CJSchema, root.CJOperations);
   }
 })(typeof self !== 'undefined' ? self : this, function (CJSchema, CJOperations) {
+  const ASSISTANT_BREAK_LABELS = ['RECREATION', 'PAUSE MERIDIENNE', 'FIN DE JOURNÉE'];
+
   function exactKeys(value, allowed) {
     return Object.keys(value).every(key => allowed.includes(key));
   }
@@ -27,11 +29,15 @@
     if (!CJSchema.DAYS.includes(operation.day)) return 'Jour invalide';
     const block = operation.block;
     if (!block || typeof block !== 'object' || Array.isArray(block)) return 'Bloc invalide';
-    if (!exactKeys(block, ['type', 'tag', 'content', 'time', 'documents'])) return 'Champ de bloc inattendu';
-    if (block.type !== 'subject') return 'Type de bloc IA invalide';
+    const allowedFields = block.type === 'break'
+      ? ['type', 'label', 'time']
+      : ['type', 'tag', 'content', 'time', 'documents'];
+    if (!exactKeys(block, allowedFields)) return 'Champ de bloc inattendu';
+    if (!['subject', 'break'].includes(block.type)) return 'Type de bloc IA invalide';
+    if (block.type === 'break' && !ASSISTANT_BREAK_LABELS.includes(block.label)) return 'Pause IA invalide';
     const error = CJOperations.validateBlock(block, false);
     if (error) return error;
-    for (const document of block.documents) {
+    for (const document of block.documents || []) {
       const documentError = validateAssistantDocument(document);
       if (documentError) return documentError;
     }
@@ -50,7 +56,7 @@
     if (typeof value.clarificationQuestion !== 'string' || value.clarificationQuestion.length > 500) {
       throw new Error('Question invalide');
     }
-    if (!Array.isArray(value.operations) || value.operations.length > 12) throw new Error('Opérations invalides');
+    if (!Array.isArray(value.operations) || value.operations.length > 24) throw new Error('Opérations invalides');
     value.operations.forEach(operation => {
       const error = validateAssistantOperation(operation);
       if (error) throw new Error(error);
@@ -65,10 +71,11 @@
     return normalizeProposal(proposal).operations.map(operation => ({
       weekKey: operation.weekKey,
       day: operation.day,
-      tag: operation.block.tag,
-      content: operation.block.content,
+      type: operation.block.type,
+      tag: operation.block.type === 'break' ? operation.block.label : operation.block.tag,
+      content: operation.block.type === 'break' ? '' : operation.block.content,
       time: operation.block.time || '',
-      documents: CJSchema.clone(operation.block.documents)
+      documents: CJSchema.clone(operation.block.documents || [])
     }));
   }
 

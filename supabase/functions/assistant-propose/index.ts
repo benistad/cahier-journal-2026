@@ -9,7 +9,7 @@ function validWeekKey(value: unknown): value is string {
   return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
 
-async function openRouterProposal(narrative: string, context: { weekKey: string; day: typeof JOURNAL_DAYS[number] }, candidates: Parameters<typeof modelMessages>[2]) {
+async function openRouterProposal(conversation: string[], context: { weekKey: string; day: typeof JOURNAL_DAYS[number] }, candidates: Parameters<typeof modelMessages>[2]) {
   const apiKey = Deno.env.get('OPENROUTER_API_KEY');
   if (!apiKey) throw new Error('OpenRouter n’est pas configuré');
   const controller = new AbortController();
@@ -26,7 +26,7 @@ async function openRouterProposal(narrative: string, context: { weekKey: string;
       },
       body: JSON.stringify({
         model: ASSISTANT_MODEL,
-        messages: modelMessages(narrative, context, candidates),
+        messages: modelMessages(conversation, context, candidates),
         stream: false,
         max_completion_tokens: 2500,
         provider: { require_parameters: true, zdr: true, data_collection: 'deny' },
@@ -52,8 +52,14 @@ Deno.serve(async req => {
   try {
     const user = await authenticatedUser(req);
     const body = await req.json();
-    const narrative = typeof body?.narrative === 'string' ? body.narrative.trim() : '';
-    if (narrative.length < 10 || narrative.length > 8000) return json(req, { error: 'Récit trop court ou trop long' }, 400);
+    const rawConversation = Array.isArray(body?.conversation)
+      ? body.conversation
+      : (typeof body?.narrative === 'string' ? [body.narrative] : []);
+    const conversation = rawConversation.map((message: unknown) => typeof message === 'string' ? message.trim() : '');
+    const conversationLength = conversation.reduce((total: number, message: string) => total + message.length, 0);
+    if (!conversation.length || conversation.length > 12 || conversation.some((message: string) => message.length < 2 || message.length > 8000) || conversationLength > 16000) {
+      return json(req, { error: 'Conversation trop courte ou trop longue' }, 400);
+    }
     if (!validWeekKey(body?.weekKey) || !JOURNAL_DAYS.includes(body?.day)) {
       return json(req, { error: 'Jour cible invalide' }, 400);
     }
@@ -63,8 +69,9 @@ Deno.serve(async req => {
       .select('file_id,title,mime_type,web_view_link,path,subject,notion,sequence,role,content_excerpt')
       .eq('owner_id', user.id).limit(5000);
     if (error) throw error;
-    const candidates = selectDriveCandidates(files || [], narrative, 5);
-    const completion = await openRouterProposal(narrative, context, candidates);
+    const fullNarrative = conversation.join('\n');
+    const candidates = selectDriveCandidates(files || [], fullNarrative, 5);
+    const completion = await openRouterProposal(conversation, context, candidates);
     const proposal = validateModelProposal(completion.value, new Set(candidates.map(file => file.file_id)));
     return json(req, {
       proposal: {

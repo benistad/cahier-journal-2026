@@ -1,5 +1,5 @@
 import {
-  buildOperations, modelMessages, selectDriveCandidates, validateModelProposal
+  buildOperations, canonicalBreakLabel, modelMessages, selectDriveCandidates, validateModelProposal
 } from './assistant.ts';
 
 const files = [
@@ -27,7 +27,7 @@ Deno.test('sélectionne au plus cinq candidats et préfère le PDF final', () =>
 
 Deno.test('ne transmet au modèle que les candidats retenus et tronqués', () => {
   const candidate = { ...files[0], content_excerpt: 'x'.repeat(4000) };
-  const messages = modelMessages('Le présent', { weekKey: '2026-06-08', day: 'Lundi' }, [candidate]);
+  const messages = modelMessages(['Le présent'], { weekKey: '2026-06-08', day: 'Lundi' }, [candidate]);
   const payload = JSON.parse(messages[1].content);
   if (payload.untrustedDriveCandidates.length !== 1) throw new Error('candidats invalides');
   if (payload.untrustedDriveCandidates[0].excerpt.length !== 1600) throw new Error('extrait non tronqué');
@@ -38,7 +38,7 @@ Deno.test('rejette tout document inventé par le modèle', () => {
   try {
     validateModelProposal({
       summary: 'Résumé', clarificationNeeded: false, clarificationQuestion: '',
-      activities: [{ tag: 'Français', content: 'Présent', time: '', documentFileIds: ['invente'] }]
+      items: [{ type: 'subject', tag: 'Français', content: 'Présent', label: '', time: '', documentFileIds: ['invente'] }]
     }, new Set(['present-pdf']));
   } catch (_error) {
     rejected = true;
@@ -49,9 +49,40 @@ Deno.test('rejette tout document inventé par le modèle', () => {
 Deno.test('construit seulement des opérations sans les appliquer', () => {
   const proposal = validateModelProposal({
     summary: 'Une activité', clarificationNeeded: false, clarificationQuestion: '',
-    activities: [{ tag: 'Français', content: 'Le présent', time: '09:00', documentFileIds: ['present-pdf'] }]
+    items: [{ type: 'subject', tag: 'Français', content: 'Le présent', label: '', time: '09:00', documentFileIds: ['present-pdf'] }]
   }, new Set(['present-pdf']));
   const operations = buildOperations(proposal, { weekKey: '2026-06-08', day: 'Lundi' }, [files[1]]);
   if (operations.length !== 1 || operations[0].type !== 'addBlock') throw new Error('opération invalide');
+  if (operations[0].block.type !== 'subject') throw new Error('activité transformée en pause');
   if (operations[0].block.documents[0]?.fileId !== 'present-pdf') throw new Error('document absent');
+});
+
+Deno.test('récréation, cantine et pause méridienne sont des pauses canoniques', () => {
+  if (canonicalBreakLabel('récré du matin') !== 'RECREATION') throw new Error('récré non reconnue');
+  if (canonicalBreakLabel('cantine') !== 'PAUSE MERIDIENNE') throw new Error('cantine non reconnue');
+  if (canonicalBreakLabel('pause méridienne') !== 'PAUSE MERIDIENNE') throw new Error('pause non reconnue');
+});
+
+Deno.test('corrige défensivement une pause renvoyée comme matière', () => {
+  const proposal = validateModelProposal({
+    summary: 'Une activité puis la pause', clarificationNeeded: false, clarificationQuestion: '',
+    items: [
+      { type: 'subject', tag: 'EPS', content: 'Baseball, séance 1.', label: '', time: '', documentFileIds: [] },
+      { type: 'subject', tag: 'Cantine', content: 'Déjeuner.', label: '', time: '12h', documentFileIds: [] }
+    ]
+  }, new Set());
+  const operations = buildOperations(proposal, { weekKey: '2026-06-08', day: 'Mardi' }, []);
+  if (operations[1].block.type !== 'break' || operations[1].block.label !== 'PAUSE MERIDIENNE') {
+    throw new Error('cantine conservée comme matière');
+  }
+});
+
+Deno.test('transmet toute la conversation dans l’ordre et demande un brouillon complet', () => {
+  const messages = modelMessages(
+    ['Rituels puis EPS puis récréation.', 'Après la récréation : dictée du mardi.'],
+    { weekKey: '2026-06-08', day: 'Mardi' }, []
+  );
+  const payload = JSON.parse(messages[1].content);
+  if (payload.conversation.length !== 2 || payload.conversation[1].turn !== 2) throw new Error('conversation perdue');
+  if (!messages[0].content.includes('jamais une matière')) throw new Error('règle de pause absente');
 });

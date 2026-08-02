@@ -32,6 +32,25 @@ test('valide et prépare un aperçu sans muter la proposition', () => {
   assert.deepEqual(proposal, before);
 });
 
+test('représente une récréation comme une pause et non comme une matière', () => {
+  const proposal = validProposal();
+  proposal.operations.push({
+    type: 'addBlock', weekKey: '2026-06-08', day: 'Lundi',
+    block: { type: 'break', label: 'RECREATION', time: '10h15' }
+  });
+  const preview = previewItems(proposal);
+  assert.deepEqual(preview[1], {
+    weekKey: '2026-06-08', day: 'Lundi', type: 'break', tag: 'RECREATION',
+    content: '', time: '10h15', documents: []
+  });
+});
+
+test('rejette un faux libellé de pause envoyé par le serveur', () => {
+  const proposal = validProposal();
+  proposal.operations[0].block = { type: 'break', label: 'Cantine' };
+  assert.throws(() => normalizeProposal(proposal), /Pause IA invalide/);
+});
+
 test('rejette toute suppression ou modification proposée par le serveur IA', () => {
   const proposal = validProposal();
   proposal.operations[0].type = 'deleteBlock';
@@ -64,7 +83,7 @@ test('une opération invalide annule tout le lot', () => {
   assert.equal(result.data.weeks['2026-06-08'].Lundi.blocks.length, 0);
 });
 
-test('le client ne transmet que le récit et le contexte à la fonction serveur', async () => {
+test('le client transmet la conversation progressive et le contexte à la fonction serveur', async () => {
   const calls = [];
   const client = {
     functions: {
@@ -74,7 +93,10 @@ test('le client ne transmet que le récit et le contexte à la fonction serveur'
       }
     }
   };
-  const input = { narrative: 'Nous avons travaillé le présent.', weekKey: '2026-06-08', day: 'Lundi' };
+  const input = {
+    conversation: ['Nous avons travaillé le présent.', 'Puis récréation.'],
+    weekKey: '2026-06-08', day: 'Lundi'
+  };
   const response = await createAssistantClient(client).propose(input);
   assert.equal(response.candidateCount, 1);
   assert.deepEqual(calls, [['assistant-propose', { body: input }]]);
