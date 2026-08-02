@@ -1,5 +1,5 @@
 import {
-  buildOperations, canonicalBreakLabel, modelMessages, selectDriveCandidates, validateModelProposal
+  buildOperations, canonicalBreakLabel, canonicalSubjectTag, modelMessages, selectDriveCandidates, validateModelProposal
 } from './assistant.ts';
 
 const files = [
@@ -61,6 +61,15 @@ Deno.test('récréation, cantine et pause méridienne sont des pauses canoniques
   if (canonicalBreakLabel('récré du matin') !== 'RECREATION') throw new Error('récré non reconnue');
   if (canonicalBreakLabel('cantine') !== 'PAUSE MERIDIENNE') throw new Error('cantine non reconnue');
   if (canonicalBreakLabel('pause méridienne') !== 'PAUSE MERIDIENNE') throw new Error('pause non reconnue');
+});
+
+Deno.test('la correction de la dictée reste dans la matière Dictée', () => {
+  if (canonicalSubjectTag('Correction', 'Correction collective de la dictée.') !== 'Dictée') {
+    throw new Error('correction classée comme matière');
+  }
+  if (canonicalSubjectTag('Correction', 'Correction des problèmes.') !== 'Correction') {
+    throw new Error('autre correction reclassée à tort');
+  }
 });
 
 Deno.test('corrige défensivement une pause renvoyée comme matière', () => {

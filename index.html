@@ -738,6 +738,7 @@
 <script src="js/drive-catalog.js"></script>
 <script src="js/drive-client.js"></script>
 <script src="js/openrouter-usage.js"></script>
+<script src="js/journal-documents.js"></script>
 <script src="js/assistant-client.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
@@ -895,6 +896,23 @@ function fileIcon(name = '') {
   if (['png','jpg','jpeg','gif','webp'].includes(e)) return '🖼️';
   if (['doc','docx'].includes(e)) return '📝';
   return '📎';
+}
+
+function appendBlockDocuments(container, block) {
+  const documents = CJJournalDocuments.forBlock(block);
+  if (!documents.length) return;
+  const list = document.createElement('div');
+  list.className = 'act-docs';
+  list.setAttribute('aria-label', 'Documents associés');
+  documents.forEach(associatedDocument => {
+    const link = document.createElement('a');
+    link.href = associatedDocument.url;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = `${associatedDocument.icon} ${associatedDocument.title}`;
+    list.appendChild(link);
+  });
+  container.appendChild(list);
 }
 
 function fmtSize(bytes) {
@@ -1435,6 +1453,7 @@ function renderJournal() {
             <div class="act-content">${parseContent(block.content)}</div>
             <span class="act-edit-hint">✏️</span>
           `;
+          appendBlockDocuments(row.querySelector('.act-content'), block);
           row.addEventListener('click', () => {
             if (!document.body.classList.contains('edit-mode')) return;
             switchDay(day);   // opens panel if closed

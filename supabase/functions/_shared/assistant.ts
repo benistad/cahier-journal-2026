@@ -112,6 +112,16 @@ export function canonicalBreakLabel(value: unknown): typeof BREAK_LABELS[number]
   return null;
 }
 
+export function canonicalSubjectTag(tag: string, content: string) {
+  const normalizedTag = normalizeText(tag);
+  const normalizedContent = normalizeText(content);
+  const isCorrectionTag = normalizedTag === 'correction' || normalizedTag.startsWith('correction ');
+  if (normalizedTag.includes('dictee') || (isCorrectionTag && normalizedContent.includes('dictee'))) {
+    return 'Dictée';
+  }
+  return tag.trim();
+}
+
 export function validateModelProposal(value: unknown, allowedFileIds: Set<string>): ModelProposal {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Proposition IA invalide');
   const raw = value as Record<string, unknown>;
@@ -143,10 +153,11 @@ export function validateModelProposal(value: unknown, allowedFileIds: Set<string
         time: activity.time.trim(), documentFileIds: []
       };
     }
+    const content = requiredString(activity.content, `contenu ${index}`, 4000);
     return {
       type: 'subject' as const,
-      tag: requiredString(activity.tag, `matière ${index}`, 80),
-      content: requiredString(activity.content, `contenu ${index}`, 4000),
+      tag: canonicalSubjectTag(requiredString(activity.tag, `matière ${index}`, 80), content),
+      content,
       label: '',
       time: activity.time.trim(),
       documentFileIds
@@ -247,6 +258,7 @@ export function modelMessages(
         'Fin de journée, sortie ou départ sont un break avec label FIN DE JOURNÉE.',
         'Pour un break, tag et content sont vides, documentFileIds est vide et label contient uniquement une des trois valeurs autorisées.',
         'Pour un subject, label est vide. Utilise une étiquette pédagogique naturelle et précise, par exemple Rituels, Dictée, EDL – Grammaire, Numération, EPS ou Histoire.',
+        'Une dictée, sa correction collective et toute activité explicitement présentée comme correction de la dictée utilisent toujours l’étiquette Dictée, jamais l’étiquette Correction.',
         'Quand l’enseignant nomme une étiquette puis énumère plusieurs éléments avant le prochain « puis », « ensuite », pause ou changement explicite de matière, conserve tous ces éléments dans un seul bloc sous cette étiquette.',
         'Exemple : « Rituels : petit devin et fiche problème 31, problèmes 4 et 5. Puis EPS » donne un seul bloc Rituels contenant les deux éléments, puis un bloc EPS.',
         'Respecte les relations avant/après et coupe une séance en plusieurs blocs si l’enseignant le demande autour d’une pause.',
