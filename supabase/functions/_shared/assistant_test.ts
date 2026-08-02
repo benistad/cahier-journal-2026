@@ -85,4 +85,5 @@ Deno.test('transmet toute la conversation dans l’ordre et demande un brouillon
   const payload = JSON.parse(messages[1].content);
   if (payload.conversation.length !== 2 || payload.conversation[1].turn !== 2) throw new Error('conversation perdue');
   if (!messages[0].content.includes('jamais une matière')) throw new Error('règle de pause absente');
+  if (!messages[0].content.includes('un seul bloc Rituels')) throw new Error('règle de regroupement absente');
 });
