@@ -153,8 +153,9 @@
     .assistant-context label { display: flex; align-items: center; gap: 7px; color: #475569; font-size: .72rem; font-weight: 700; }
     .assistant-context select { border: 1px solid #cbd5e1; border-radius: 8px; padding: 7px 30px 7px 9px; background: #fff; font: inherit; }
     #assistant-week-label { color: #64748b; font-size: .75rem; }
-    #assistant-reset { margin-left: auto; border: 0; background: transparent; color: #475569; cursor: pointer; font-size: .72rem; font-weight: 700; padding: 7px 4px; }
-    #assistant-reset:hover { color: var(--accent); }
+    #assistant-rules-toggle { margin-left: auto; }
+    #assistant-reset, #assistant-rules-toggle { border: 0; background: transparent; color: #475569; cursor: pointer; font-size: .72rem; font-weight: 700; padding: 7px 4px; }
+    #assistant-reset:hover, #assistant-rules-toggle:hover { color: var(--accent); }
     .assistant-workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, .92fr); flex: 1; min-height: 0; }
     .assistant-conversation { min-height: 0; display: flex; flex-direction: column; border-right: 1px solid #e5e7eb; background: #fff; }
     .assistant-history { flex: 1; min-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 18px; background: linear-gradient(#fff, #fbfdff); }
@@ -176,6 +177,18 @@
     .assistant-empty-preview[hidden] { display: none; }
     .assistant-empty-preview strong { display: block; color: #334155; margin-bottom: 5px; }
     .assistant-empty-preview span { font-size: .74rem; line-height: 1.5; }
+    .assistant-memory-card { border: 1px solid #c4b5fd; border-radius: 12px; background: #f5f3ff; padding: 14px; }
+    .assistant-memory-card[hidden], #assistant-rules-panel[hidden] { display: none; }
+    .assistant-memory-card h3, #assistant-rules-panel h3 { font-size: .9rem; color: #4c1d95; margin: 0 0 7px; }
+    .assistant-memory-card p { color: #5b21b6; font-size: .73rem; line-height: 1.45; margin: 0 0 10px; }
+    #assistant-memory-rule { display: block; padding: 10px; border-left: 3px solid #7c3aed; background: #fff; color: #312e81; font-size: .78rem; line-height: 1.45; }
+    .assistant-memory-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    #assistant-memory-save { background: #6d28d9; }
+    .assistant-rules-list { display: grid; gap: 8px; margin-top: 10px; }
+    .assistant-rule-row { display: flex; align-items: start; gap: 9px; padding: 10px; border: 1px solid #ddd6fe; border-radius: 9px; background: #fff; }
+    .assistant-rule-row span { flex: 1; color: #3f3f46; font-size: .75rem; line-height: 1.45; }
+    .assistant-rule-delete { border: 0; background: transparent; color: #b91c1c; cursor: pointer; padding: 2px 4px; }
+    #assistant-rules-empty { color: #64748b; font-size: .74rem; line-height: 1.5; padding: 18px 0; }
     #assistant-preview { margin-top: 0; }
     #assistant-preview[hidden] { display: none; }
     #assistant-preview h3 { font-size: .9rem; color: var(--panel-bg); margin: 0 0 5px; }
@@ -198,7 +211,7 @@
       .assistant-card { width: 100%; height: 100dvh; max-height: none; border-radius: 0; }
       .assistant-head { min-height: 62px; padding: 11px 14px; }
       .assistant-context { padding: 8px 12px; gap: 8px; }
-      #assistant-reset { margin-left: 0; }
+      #assistant-rules-toggle { margin-left: 0; }
       .assistant-workspace { display: flex; flex-direction: column; overflow-y: auto; }
       .assistant-conversation { min-height: 480px; border-right: 0; border-bottom: 1px solid #e5e7eb; }
       .assistant-history { min-height: 230px; max-height: 42vh; }
@@ -595,6 +608,7 @@
         </select>
       </label>
       <span id="assistant-week-label"></span>
+      <button id="assistant-rules-toggle" type="button">🧠 Mes règles</button>
       <button id="assistant-reset" type="button">↻ Recommencer</button>
     </div>
     <div class="assistant-workspace">
@@ -613,8 +627,22 @@
       <section class="assistant-draft" aria-label="Aperçu du cahier">
         <h3 class="assistant-draft-title">Aperçu de la journée</h3>
         <div class="assistant-draft-note" id="assistant-draft-note">Rien n’est enregistré avant ta validation.</div>
+        <div class="assistant-memory-card" id="assistant-memory-preview" hidden>
+          <h3>Règle à mémoriser</h3>
+          <p>Cette règle sera utilisée dans tes prochaines conversations, sur tous tes appareils.</p>
+          <span id="assistant-memory-rule"></span>
+          <div class="assistant-memory-actions">
+            <button class="btn-primary" id="assistant-memory-save">Mémoriser cette règle</button>
+            <button class="btn-primary" id="assistant-memory-cancel">Annuler</button>
+          </div>
+        </div>
+        <div id="assistant-rules-panel" hidden>
+          <h3>Règles mémorisées</h3>
+          <div id="assistant-rules-empty">Aucune règle pour le moment. Écris « Retiens que… » dans la conversation.</div>
+          <div class="assistant-rules-list" id="assistant-rules-list"></div>
+        </div>
         <div class="assistant-empty-preview" id="assistant-empty-preview">
-          <span><strong>Ton brouillon apparaîtra ici</strong>Tu peux parler naturellement : « puis », « après la récré », « finalement… ». Les pauses seront séparées des matières.</span>
+          <span><strong>Ton brouillon apparaîtra ici</strong>Tu peux parler naturellement ou écrire « Retiens que… » pour apprendre une habitude à l’assistant.</span>
         </div>
         <div id="assistant-preview" hidden>
           <h3>Brouillon prêt à relire</h3>
@@ -739,6 +767,7 @@
 <script src="js/drive-client.js"></script>
 <script src="js/openrouter-usage.js"></script>
 <script src="js/journal-documents.js"></script>
+<script src="js/assistant-memory.js"></script>
 <script src="js/assistant-client.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
@@ -778,6 +807,9 @@ let openRouterUsageTimer = null;
 let assistantClient = null;
 let assistantProposal = null;
 let assistantConversation = [];
+let assistantMemoryClient = null;
+let assistantRules = [];
+let pendingAssistantRule = null;
 
 function load() { return storageAdapter.load(); }
 function save() {
@@ -990,6 +1022,122 @@ function startOpenRouterUsageRefresh() {
   openRouterUsageTimer = setInterval(refreshOpenRouterUsage, 60000);
 }
 
+function hideAssistantDraftViews() {
+  document.getElementById('assistant-preview').hidden = true;
+  document.getElementById('assistant-empty-preview').hidden = true;
+  document.getElementById('assistant-memory-preview').hidden = true;
+  document.getElementById('assistant-rules-panel').hidden = true;
+}
+
+function restoreAssistantDraftView() {
+  hideAssistantDraftViews();
+  if (pendingAssistantRule) {
+    document.getElementById('assistant-memory-rule').textContent = pendingAssistantRule;
+    document.getElementById('assistant-memory-preview').hidden = false;
+  } else if (assistantProposal && !assistantProposal.clarificationNeeded) {
+    document.getElementById('assistant-preview').hidden = false;
+  } else {
+    document.getElementById('assistant-empty-preview').hidden = false;
+  }
+}
+
+function updateAssistantRulesButton() {
+  const button = document.getElementById('assistant-rules-toggle');
+  button.textContent = `🧠 Mes règles${assistantRules.length ? ` (${assistantRules.length})` : ''}`;
+}
+
+function renderAssistantRules() {
+  const list = document.getElementById('assistant-rules-list');
+  list.innerHTML = '';
+  document.getElementById('assistant-rules-empty').hidden = assistantRules.length > 0;
+  assistantRules.forEach(rule => {
+    const row = document.createElement('div');
+    row.className = 'assistant-rule-row';
+    const text = document.createElement('span');
+    text.textContent = rule.rule;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'assistant-rule-delete';
+    remove.title = 'Supprimer cette règle';
+    remove.setAttribute('aria-label', `Supprimer la règle : ${rule.rule}`);
+    remove.textContent = '✕';
+    remove.addEventListener('click', () => removeAssistantRule(rule));
+    row.append(text, remove);
+    list.appendChild(row);
+  });
+}
+
+async function refreshAssistantRules() {
+  if (!assistantMemoryClient || !currentUser) return;
+  try {
+    assistantRules = await assistantMemoryClient.list();
+    updateAssistantRulesButton();
+    renderAssistantRules();
+    document.getElementById('assistant-rules-toggle').title = 'Relire ou supprimer les règles mémorisées';
+  } catch (error) {
+    document.getElementById('assistant-rules-toggle').title = 'Mémoire momentanément indisponible';
+  }
+}
+
+function showAssistantRules() {
+  hideAssistantDraftViews();
+  renderAssistantRules();
+  document.getElementById('assistant-rules-panel').hidden = false;
+}
+
+function showAssistantMemoryPreview(rule) {
+  pendingAssistantRule = rule;
+  hideAssistantDraftViews();
+  document.getElementById('assistant-memory-rule').textContent = rule;
+  document.getElementById('assistant-memory-preview').hidden = false;
+}
+
+async function savePendingAssistantRule() {
+  if (!pendingAssistantRule || !assistantMemoryClient || !currentUser) return;
+  const button = document.getElementById('assistant-memory-save');
+  const rule = pendingAssistantRule;
+  button.disabled = true;
+  document.getElementById('assistant-status').textContent = 'J’enregistre cette règle…';
+  try {
+    await assistantMemoryClient.add(rule, currentUser.id);
+    assistantMessage('bot', 'C’est mémorisé. J’utiliserai cette règle dans les prochaines conversations.');
+    document.getElementById('assistant-status').textContent = 'Règle mémorisée et synchronisée.';
+  } catch (error) {
+    if (error && error.code === '23505') {
+      assistantMessage('bot', 'Cette règle était déjà mémorisée.');
+      document.getElementById('assistant-status').textContent = 'Règle déjà présente.';
+    } else {
+      document.getElementById('assistant-status').textContent = 'La règle n’a pas pu être enregistrée. Réessaie dans un instant.';
+      return;
+    }
+  } finally {
+    button.disabled = false;
+  }
+  pendingAssistantRule = null;
+  await refreshAssistantRules();
+  restoreAssistantDraftView();
+  document.getElementById('assistant-narrative').focus();
+}
+
+function cancelPendingAssistantRule() {
+  pendingAssistantRule = null;
+  document.getElementById('assistant-status').textContent = '';
+  restoreAssistantDraftView();
+  document.getElementById('assistant-narrative').focus();
+}
+
+async function removeAssistantRule(rule) {
+  if (!assistantMemoryClient || !currentUser) return;
+  if (!confirm(`Supprimer cette règle mémorisée ?\n\n${rule.rule}`)) return;
+  try {
+    await assistantMemoryClient.remove(rule.id, currentUser.id);
+    await refreshAssistantRules();
+    document.getElementById('assistant-status').textContent = 'Règle supprimée.';
+  } catch (error) {
+    document.getElementById('assistant-status').textContent = 'La règle n’a pas pu être supprimée.';
+  }
+}
+
 function assistantMessage(kind, message) {
   const bubble = document.createElement('div');
   bubble.className = `assistant-bubble ${kind}`;
@@ -1003,8 +1151,8 @@ function assistantMessage(kind, message) {
 function resetAssistantSession() {
   assistantProposal = null;
   assistantConversation = [];
-  document.getElementById('assistant-preview').hidden = true;
-  document.getElementById('assistant-empty-preview').hidden = false;
+  pendingAssistantRule = null;
+  restoreAssistantDraftView();
   document.getElementById('assistant-status').textContent = '';
   document.getElementById('assistant-narrative').value = '';
   document.getElementById('assistant-history').innerHTML = '';
@@ -1021,6 +1169,7 @@ function openAssistant() {
   document.getElementById('assistant-week-label').textContent = `Semaine du ${weekLabel(weekKey())}`;
   resetAssistantSession();
   document.getElementById('assistant-modal').hidden = false;
+  refreshAssistantRules();
   document.getElementById('assistant-narrative').focus();
 }
 
@@ -1029,6 +1178,7 @@ function closeAssistant() {
 }
 
 function renderAssistantPreview(proposal) {
+  hideAssistantDraftViews();
   const preview = document.getElementById('assistant-preview');
   const list = document.getElementById('assistant-preview-list');
   list.innerHTML = '';
@@ -1061,7 +1211,6 @@ function renderAssistantPreview(proposal) {
     }
     list.appendChild(card);
   });
-  document.getElementById('assistant-empty-preview').hidden = true;
   document.getElementById('assistant-apply').textContent = `Valider et ajouter ${items.length} bloc${items.length > 1 ? 's' : ''}`;
   preview.hidden = false;
 }
@@ -1073,6 +1222,19 @@ async function requestAssistantProposal() {
   const button = document.getElementById('assistant-propose');
   if (narrative.length < 2) {
     status.textContent = 'Écris au moins une activité ou une pause.';
+    return;
+  }
+  if (CJAssistantMemory.isMemoryCommand(narrative)) {
+    try {
+      const rule = CJAssistantMemory.extractRule(narrative);
+      assistantMessage('user', narrative);
+      assistantMessage('bot', 'Je peux mémoriser cette règle. Relis-la puis valide son enregistrement.');
+      showAssistantMemoryPreview(rule);
+      document.getElementById('assistant-narrative').value = '';
+      status.textContent = 'Rien n’est enregistré avant ta validation.';
+    } catch (error) {
+      status.textContent = error.message;
+    }
     return;
   }
   if (assistantConversation.length >= 12) {
@@ -1324,6 +1486,7 @@ async function connectSync() {
     syncClient.subscribe(handleRemoteRow);
     initializeDrive();
     startOpenRouterUsageRefresh();
+    refreshAssistantRules();
   } catch (error) {
     hideAuth();
     syncReady = false;
@@ -1347,6 +1510,7 @@ async function initializeSupabase() {
   driveClient = CJDriveClient.createDriveClient(supabaseClient);
   openRouterUsageClient = CJOpenRouterUsage.createUsageClient(supabaseClient);
   assistantClient = CJAssistant.createAssistantClient(supabaseClient);
+  assistantMemoryClient = CJAssistantMemory.createMemoryClient(supabaseClient);
   authSubscription = syncClient.onAuthStateChange((event, session) => {
     if (event === 'PASSWORD_RECOVERY') {
       currentUser = session && session.user ? session.user : null;
@@ -1827,6 +1991,13 @@ document.getElementById('assistant-modal').addEventListener('click', event => {
 });
 document.getElementById('assistant-propose').addEventListener('click', requestAssistantProposal);
 document.getElementById('assistant-apply').addEventListener('click', applyAssistantProposal);
+document.getElementById('assistant-memory-save').addEventListener('click', savePendingAssistantRule);
+document.getElementById('assistant-memory-cancel').addEventListener('click', cancelPendingAssistantRule);
+document.getElementById('assistant-rules-toggle').addEventListener('click', () => {
+  const panel = document.getElementById('assistant-rules-panel');
+  if (panel.hidden) showAssistantRules();
+  else restoreAssistantDraftView();
+});
 document.getElementById('assistant-reset').addEventListener('click', resetAssistantSession);
 document.getElementById('assistant-day').addEventListener('change', resetAssistantSession);
 document.getElementById('assistant-narrative').addEventListener('keydown', event => {

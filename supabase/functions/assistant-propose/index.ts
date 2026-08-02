@@ -9,7 +9,12 @@ function validWeekKey(value: unknown): value is string {
   return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
 
-async function openRouterProposal(conversation: string[], context: { weekKey: string; day: typeof JOURNAL_DAYS[number] }, candidates: Parameters<typeof modelMessages>[2]) {
+async function openRouterProposal(
+  conversation: string[],
+  context: { weekKey: string; day: typeof JOURNAL_DAYS[number] },
+  candidates: Parameters<typeof modelMessages>[2],
+  preferences: string[]
+) {
   const apiKey = Deno.env.get('OPENROUTER_API_KEY');
   if (!apiKey) throw new Error('OpenRouter n’est pas configuré');
   const controller = new AbortController();
@@ -26,7 +31,7 @@ async function openRouterProposal(conversation: string[], context: { weekKey: st
       },
       body: JSON.stringify({
         model: ASSISTANT_MODEL,
-        messages: modelMessages(conversation, context, candidates),
+        messages: modelMessages(conversation, context, candidates, preferences),
         stream: false,
         max_completion_tokens: 2500,
         provider: { require_parameters: true, zdr: true, data_collection: 'deny' },
@@ -65,13 +70,20 @@ Deno.serve(async req => {
     }
     const context = { weekKey: body.weekKey, day: body.day as typeof JOURNAL_DAYS[number] };
     const admin = adminClient();
-    const { data: files, error } = await admin.from('drive_files')
-      .select('file_id,title,mime_type,web_view_link,path,subject,notion,sequence,role,content_excerpt')
-      .eq('owner_id', user.id).limit(5000);
-    if (error) throw error;
+    const [filesResult, preferencesResult] = await Promise.all([
+      admin.from('drive_files')
+        .select('file_id,title,mime_type,web_view_link,path,subject,notion,sequence,role,content_excerpt')
+        .eq('owner_id', user.id).limit(5000),
+      admin.from('assistant_preferences')
+        .select('rule').eq('owner_id', user.id).order('created_at', { ascending: true }).limit(30)
+    ]);
+    if (filesResult.error) throw filesResult.error;
+    if (preferencesResult.error) throw preferencesResult.error;
+    const files = filesResult.data || [];
+    const preferences = (preferencesResult.data || []).map(row => row.rule);
     const fullNarrative = conversation.join('\n');
-    const candidates = selectDriveCandidates(files || [], fullNarrative, 5);
-    const completion = await openRouterProposal(conversation, context, candidates);
+    const candidates = selectDriveCandidates(files, fullNarrative, 5);
+    const completion = await openRouterProposal(conversation, context, candidates, preferences);
     const proposal = validateModelProposal(completion.value, new Set(candidates.map(file => file.file_id)));
     return json(req, {
       proposal: {

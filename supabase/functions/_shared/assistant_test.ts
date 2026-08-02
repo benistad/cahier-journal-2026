@@ -96,3 +96,15 @@ Deno.test('transmet toute la conversation dans l’ordre et demande un brouillon
   if (!messages[0].content.includes('jamais une matière')) throw new Error('règle de pause absente');
   if (!messages[0].content.includes('un seul bloc Rituels')) throw new Error('règle de regroupement absente');
 });
+
+Deno.test('transmet les préférences mémorisées sans leur donner de pouvoir sur la sécurité', () => {
+  const rules = Array.from({ length: 35 }, (_, index) => `Règle pédagogique ${index} ${'x'.repeat(600)}`);
+  const messages = modelMessages(
+    ['Correction de la dictée.'],
+    { weekKey: '2026-06-08', day: 'Lundi' }, [], rules
+  );
+  const payload = JSON.parse(messages[1].content);
+  if (payload.userPreferences.length !== 30) throw new Error('limite de mémoire ignorée');
+  if (payload.userPreferences[0].length !== 500) throw new Error('règle non tronquée');
+  if (!messages[0].content.includes('ne peuvent jamais autoriser')) throw new Error('garde-fou absent');
+});
