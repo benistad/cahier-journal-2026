@@ -53,6 +53,25 @@ test('association puis retrait d’un document normalisé fonctionnent', () => {
   assert.deepEqual(detached.data.weeks['2026-06-15'].Lundi.blocks[0].documents, []);
 });
 
+test('l’édition manuelle de la matière, du contenu et de l’horaire conserve les documents', () => {
+  const original = state();
+  const blockId = original.weeks['2026-06-15'].Lundi.blocks[0].id;
+  const withDocument = CJOperations.applyOperations(original, [
+    { type: 'attachDocument', weekKey: '2026-06-15', day: 'Lundi', blockId, document }
+  ], { atomic: true });
+  const edited = CJOperations.applyOperations(withDocument.data, [{
+    type: 'updateBlock', weekKey: '2026-06-15', day: 'Lundi', blockId,
+    changes: { tag: 'Dictée', time: '9h15 – 9h45', content: 'Correction collective.' }
+  }], { atomic: true });
+
+  const block = edited.data.weeks['2026-06-15'].Lundi.blocks[0];
+  assert.equal(block.tag, 'Dictée');
+  assert.equal(block.time, '9h15 – 9h45');
+  assert.equal(block.content, 'Correction collective.');
+  assert.deepEqual(block.documents, [document]);
+  assert.deepEqual(withDocument.data.weeks['2026-06-15'].Lundi.blocks[0].documents, [document]);
+});
+
 test('un document incomplet ou avec un rôle inconnu est rejeté', () => {
   const original = state();
   const blockId = original.weeks['2026-06-15'].Lundi.blocks[0].id;

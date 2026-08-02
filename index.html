@@ -224,7 +224,7 @@
 
     /* ── MAIN ── */
     .container { max-width: 800px; margin: 0 auto; padding: 20px 14px 80px; transition: margin-right .25s ease; }
-    body.panel-open .container { margin-right: 360px; max-width: none; }
+    body.panel-open .container { margin-right: 440px; max-width: none; }
     @media (max-width: 760px) { body.panel-open .container { margin-right: 0; } }
 
     /* ── DAY CARD ── */
@@ -349,7 +349,7 @@
 
     /* ── PANEL ── */
     #edit-panel {
-      position: fixed; right: 0; top: 0; bottom: 0; width: 360px;
+      position: fixed; right: 0; top: 0; bottom: 0; width: 440px;
       background: #fff; box-shadow: -6px 0 24px rgba(0,0,0,.15);
       z-index: 200; display: flex; flex-direction: column;
       transform: translateX(100%); transition: transform .25s ease;
@@ -364,7 +364,7 @@
     .panel-head .title { font-weight: 700; font-size: .95rem; flex: 1; }
     .panel-head .actions { display: flex; gap: 6px; }
 
-    .panel-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+    .panel-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; background: #f8fafc; }
 
     /* Day tabs */
     .panel-day-tabs {
@@ -376,18 +376,54 @@
     .day-tab {
       padding: 9px 14px; font-size: .82rem; font-weight: 600;
       cursor: pointer; white-space: nowrap; color: #666;
-      border-bottom: 3px solid transparent;
+      border: 0; border-bottom: 3px solid transparent; font-family: inherit;
       transition: color .15s, border-color .15s;
     }
     .day-tab:hover { color: var(--accent); }
     .day-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: #fff; }
 
-    /* Panel sections */
+    /* Parcours d'édition manuel */
     .psec { padding: 12px 14px; border-bottom: 1px solid #f0f0f0; }
     .psec-title {
       font-size: .7rem; font-weight: 700; color: #999;
       text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px;
     }
+    .editor-toolbar {
+      position: sticky; top: 0; z-index: 3; display: flex; align-items: center;
+      gap: 7px; padding: 10px 12px; background: rgba(255,255,255,.96);
+      border-bottom: 1px solid #e5e7eb; box-shadow: 0 4px 12px rgba(15,23,42,.05);
+    }
+    .editor-new {
+      flex: 1; border: 0; border-radius: 8px; padding: 9px 12px;
+      background: var(--accent); color: #fff; font-size: .82rem; font-weight: 750;
+      cursor: pointer;
+    }
+    .editor-toolbar .break-btn { padding: 8px 10px; letter-spacing: 0; white-space: nowrap; }
+    .editor-form {
+      margin: 12px; padding: 14px; border: 1px solid #c7d2fe; border-radius: 12px;
+      background: #fff; box-shadow: 0 8px 24px rgba(79,111,186,.1);
+    }
+    .editor-form[hidden] { display: none; }
+    .editor-form-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .editor-form-head h3 { flex: 1; color: var(--panel-bg); font-size: .92rem; }
+    .editor-form-head button { border: 0; background: transparent; color: #64748b; cursor: pointer; font-size: 1rem; }
+    .editor-form .quick-chips { margin-bottom: 12px; }
+    .editor-form .form-row { margin-bottom: 10px; }
+    .editor-form .field-label { color: #475569; }
+    .editor-form textarea.field { min-height: 110px; }
+    .editor-form-documents { margin-top: 10px; padding: 10px; border-radius: 8px; background: #f8fafc; }
+    .editor-form-documents[hidden] { display: none; }
+    .editor-form-document { display: flex; align-items: center; gap: 7px; margin-top: 6px; }
+    .editor-form-document a { flex: 1; min-width: 0; color: var(--accent); font-size: .72rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .editor-form-document button { border: 0; background: transparent; color: #b91c1c; cursor: pointer; padding: 4px; }
+    .time-field-wrap { flex: 0 0 120px; }
+    .editor-list-section { flex: 1; padding: 12px; }
+    .editor-list-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 9px; }
+    .editor-list-head .psec-title { margin: 0; color: #64748b; }
+    .editor-list-help { margin-left: auto; color: #94a3b8; font-size: .66rem; }
+    .editor-options { margin: 0 12px 12px; border: 1px solid #e2e8f0; border-radius: 9px; background: #fff; }
+    .editor-options summary { cursor: pointer; padding: 10px 12px; color: #64748b; font-size: .75rem; font-weight: 700; }
+    .editor-options .psec { border-top: 1px solid #f1f5f9; border-bottom: 0; }
 
     /* Quick subject chips */
     .quick-chips { display: flex; flex-wrap: wrap; gap: 5px; }
@@ -424,21 +460,21 @@
     .break-btn:hover { background: #c8e4f0; }
 
     /* Tag input + content form */
-    .form-row { display: flex; gap: 7px; align-items: flex-start; }
+    .form-row { display: flex; gap: 9px; align-items: flex-start; }
     .field-label { font-size: .72rem; color: #888; margin-bottom: 3px; font-weight: 600; }
     input[type=text].field, textarea.field {
       width: 100%; border: 1px solid #d1d5db; border-radius: 6px;
-      padding: 7px 9px; font-size: .86rem; font-family: inherit;
+      padding: 9px 10px; font-size: .86rem; font-family: inherit;
       outline: none; transition: border-color .15s; resize: none;
     }
     input[type=text].field:focus, textarea.field:focus { border-color: var(--accent); }
     textarea.field { min-height: 70px; overflow-y: hidden; }
-    .tag-field-wrap { flex: 0 0 130px; }
+    .tag-field-wrap { flex: 1; }
 
     .form-actions { display: flex; gap: 7px; margin-top: 8px; }
     .btn-submit {
       flex: 1; background: var(--accent); color: #fff; border: none;
-      padding: 8px 12px; border-radius: 6px; font-size: .84rem;
+      padding: 10px 12px; border-radius: 7px; font-size: .84rem;
       font-weight: 600; cursor: pointer; transition: background .15s;
     }
     .btn-submit:hover { background: #3a5aaa; }
@@ -446,23 +482,25 @@
     .btn-submit.update:hover { background: #15803d; }
     .btn-cancel {
       background: #f3f4f6; color: #555; border: none;
-      padding: 8px 12px; border-radius: 6px; font-size: .84rem;
-      cursor: pointer; display: none;
+      padding: 10px 12px; border-radius: 7px; font-size: .84rem;
+      cursor: pointer;
     }
-    .btn-cancel.visible { display: block; }
 
     /* Blocks list */
-    .blocks-list { display: flex; flex-direction: column; gap: 5px; }
+    .blocks-list { display: flex; flex-direction: column; gap: 8px; }
     .b-row {
-      display: flex; align-items: center; gap: 6px;
-      background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 7px;
-      padding: 6px 8px; font-size: .8rem; cursor: grab;
-      transition: box-shadow .15s; user-select: none;
+      display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 8px;
+      background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+      padding: 9px 8px; font-size: .8rem; cursor: pointer;
+      transition: box-shadow .15s, border-color .15s; user-select: none;
     }
-    .b-row:hover { box-shadow: 0 2px 6px rgba(0,0,0,.1); }
+    .b-row:hover { box-shadow: 0 3px 10px rgba(15,23,42,.08); border-color: #c7d2fe; }
+    .b-row.editing { border-color: #4f6fba; box-shadow: 0 0 0 2px #dbeafe; }
     .b-row.dragging { opacity: .4; }
     .b-row.drag-over { background: #e0e9ff; border-color: var(--accent); }
-    .b-handle { color: #bbb; font-size: 1rem; cursor: grab; flex-shrink: 0; }
+    .b-handle { color: #cbd5e1; font-size: 1rem; cursor: grab; flex-shrink: 0; }
+    .b-main { min-width: 0; }
+    .b-main-head { display: flex; align-items: center; gap: 6px; min-width: 0; }
     .b-tag {
       background: var(--tag-bg); border: 1px solid var(--tag-bd);
       border-radius: 4px; padding: 1px 7px;
@@ -473,13 +511,15 @@
       border-radius: 4px; padding: 1px 7px;
       font-size: .7rem; font-weight: 700; flex-shrink: 0;
     }
-    .b-preview { flex: 1; color: #555; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .b-actions { display: flex; gap: 3px; flex-shrink: 0; }
+    .b-time { color: #64748b; font-size: .68rem; font-weight: 700; white-space: nowrap; }
+    .b-preview { color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 4px; font-size: .75rem; }
+    .b-actions { display: grid; grid-template-columns: repeat(2, 32px); gap: 3px; flex-shrink: 0; }
     .b-btn {
-      background: none; border: none; padding: 2px 5px;
-      border-radius: 4px; cursor: pointer; font-size: .8rem; color: #aaa;
+      width: 32px; height: 30px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 0;
+      border-radius: 6px; cursor: pointer; font-size: .8rem; color: #64748b;
       transition: color .15s, background .15s;
     }
+    .b-btn:disabled { opacity: .28; cursor: default; }
     .b-btn:hover { color: #333; background: #ececec; }
     .b-btn.del:hover { color: #ef4444; background: #fef2f2; }
 
@@ -498,7 +538,7 @@
 
     /* ── OVERLAY (mobile uniquement, masqué en desktop) ── */
     #overlay { position: fixed; inset: 0; background: rgba(0,0,0,.25); z-index: 150; display: none; }
-    @media (max-width: 600px) { #overlay.visible { display: block; } }
+    @media (max-width: 760px) { #overlay.visible { display: block; } }
 
     /* ── KEYBOARD HINT ── */
     .kbd { display: inline-block; background: #f0f0f0; border: 1px solid #ccc; border-radius: 3px; padding: 0 4px; font-size: .7rem; color: #666; }
@@ -512,8 +552,18 @@
     }
     #toast.show { transform: translateX(-50%) translateY(0); }
 
-    @media (max-width: 600px) {
+    @media (max-width: 760px) {
       #edit-panel { width: 100%; }
+      .editor-toolbar { padding: 9px; }
+      .editor-toolbar .break-btn { padding: 8px; font-size: .7rem; }
+      .editor-form { margin: 9px; }
+      .editor-form .form-row { flex-direction: column; }
+      .time-field-wrap { flex: auto; width: 100%; }
+      .b-actions { grid-template-columns: repeat(4, 36px); }
+      .b-btn { width: 36px; height: 36px; }
+      .b-row { grid-template-columns: minmax(0,1fr); }
+      .b-handle { display: none; }
+      .b-actions { margin-top: 4px; }
       .topbar { padding: 9px 12px; gap: 7px; }
       #week-label { min-width: 120px; font-size: .72rem; }
       .topbar h1 { font-size: .88rem; }
@@ -665,10 +715,10 @@
 <div id="overlay"></div>
 
 <!-- ── EDIT PANEL ── -->
-<div id="edit-panel">
+<div id="edit-panel" role="dialog" aria-modal="true" aria-labelledby="panel-title">
   <!-- Header -->
   <div class="panel-head">
-    <span class="title">✏️ Édition</span>
+    <span class="title" id="panel-title">✏️ Édition du lundi</span>
     <div class="actions">
       <button class="icon-btn" id="btn-export" title="Exporter JSON">💾</button>
       <button class="icon-btn" id="btn-import-btn" title="Importer JSON">📂</button>
@@ -681,41 +731,24 @@
   <div class="panel-day-tabs" id="day-tabs"></div>
 
   <div class="panel-body" id="panel-body">
-
-    <!-- Quick subjects -->
-    <div class="psec">
-      <div class="psec-title">Sujets rapides — clic pour remplir</div>
-      <div class="quick-chips" id="quick-chips"></div>
-    </div>
-
-    <!-- Attachment upload -->
-    <div class="psec">
-      <div class="psec-title">📎 Pièce jointe</div>
-      <div class="upload-zone">
-        <span>Cliquer ou déposer un fichier PDF / image</span>
-        <input type="file" id="file-input" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-      </div>
-    </div>
-
-    <!-- Add break -->
-    <div class="psec">
-      <div class="psec-title">Ajouter une pause</div>
-      <div class="break-btns">
-        <button class="break-btn" data-break="RECREATION">RECREATION</button>
-        <button class="break-btn" data-break="PAUSE MERIDIENNE">PAUSE MERIDIENNE</button>
-        <button class="break-btn" data-break="FIN DE JOURNÉE">FIN DE JOURNÉE</button>
-      </div>
+    <div class="editor-toolbar" aria-label="Ajouter au programme">
+      <button class="editor-new" id="btn-new-activity" type="button">＋ Activité</button>
+      <button class="break-btn" data-break="RECREATION" type="button">Récré</button>
+      <button class="break-btn" data-break="PAUSE MERIDIENNE" type="button">Midi</button>
+      <button class="break-btn" data-break="FIN DE JOURNÉE" type="button">Fin</button>
     </div>
 
     <!-- Activity form -->
-    <div class="psec">
-      <div class="psec-title">
-        Ajouter / modifier une matière &nbsp;
-        <span class="kbd">Ctrl</span>+<span class="kbd">↵</span> pour valider
+    <section class="editor-form" id="activity-form" hidden>
+      <div class="editor-form-head">
+        <h3 id="activity-form-title">Nouvelle activité</h3>
+        <span class="kbd">Ctrl</span>+<span class="kbd">↵</span>
+        <button type="button" id="activity-form-close" title="Fermer le formulaire">✕</button>
       </div>
+      <div class="quick-chips" id="quick-chips" aria-label="Matières fréquentes"></div>
       <div class="form-row">
         <div class="tag-field-wrap">
-          <div class="field-label">Étiquette</div>
+          <label class="field-label" for="input-tag">Matière</label>
           <input type="text" class="field" id="input-tag" placeholder="Rituels…" list="tags-list" autocomplete="off">
           <datalist id="tags-list">
             <option value="Rituels"><option value="APQ"><option value="Dictée">
@@ -726,23 +759,45 @@
             <option value="EMC"><option value="Technologie">
           </datalist>
         </div>
-        <div style="flex:1">
-          <div class="field-label">Contenu (une ligne = un item)</div>
-          <textarea class="field" id="input-content" placeholder="Une ligne par item&#10;Lien : [texte](https://url)"></textarea>
+        <div class="time-field-wrap">
+          <label class="field-label" for="input-time">Horaire <span style="font-weight:400">(facultatif)</span></label>
+          <input type="text" class="field" id="input-time" placeholder="9h15 – 9h45" autocomplete="off">
         </div>
       </div>
-      <div class="form-actions">
-        <button class="btn-submit" id="btn-submit">+ Ajouter</button>
-        <button class="btn-cancel" id="btn-cancel">Annuler</button>
+      <div>
+        <label class="field-label" for="input-content">Contenu <span style="font-weight:400">(une ligne = un item)</span></label>
+        <textarea class="field" id="input-content" placeholder="Décris l’activité…&#10;Une nouvelle ligne crée un nouvel item."></textarea>
       </div>
-    </div>
+      <div class="editor-form-documents" id="activity-form-documents" hidden>
+        <div class="field-label">Documents associés</div>
+        <div id="activity-form-document-list"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-submit" id="btn-submit">Ajouter l’activité</button>
+        <button class="btn-cancel" id="btn-cancel" type="button">Annuler</button>
+      </div>
+    </section>
 
     <!-- Blocks list -->
-    <div class="psec" style="flex:1">
-      <div class="psec-title">Blocs du jour — glisser pour réordonner</div>
+    <section class="editor-list-section">
+      <div class="editor-list-head">
+        <div class="psec-title">Programme du jour</div>
+        <span class="editor-list-help">Flèches ou glisser pour déplacer</span>
+      </div>
       <div class="blocks-list" id="blocks-list"></div>
       <div id="blocks-empty" style="display:none;text-align:center;color:#ccc;padding:16px;font-size:.82rem;">Aucun bloc pour ce jour</div>
-    </div>
+    </section>
+
+    <details class="editor-options">
+      <summary>Pièces jointes et autres options</summary>
+      <div class="psec">
+        <div class="psec-title">📎 Pièce jointe du jour</div>
+        <div class="upload-zone">
+          <span>Cliquer ou déposer un fichier PDF / image</span>
+          <input type="file" id="file-input" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+        </div>
+      </div>
+    </details>
 
   </div>
 
@@ -1622,7 +1677,6 @@ function renderJournal() {
             if (!document.body.classList.contains('edit-mode')) return;
             switchDay(day);   // opens panel if closed
             startEdit(bi);
-            document.getElementById('panel-body').scrollTop = 9999;
           });
           body.appendChild(row);
         }
@@ -1648,37 +1702,89 @@ function renderBlocks() {
 
   blocks.forEach((block, i) => {
     const row = document.createElement('div');
-    row.className = 'b-row';
+    row.className = `b-row${editingIdx === i ? ' editing' : ''}`;
     row.draggable = true;
     row.dataset.i = i;
 
-    let inner = `<span class="b-handle">⠿</span>`;
-    if (block.type === 'break') {
-      inner += `<span class="b-break">${block.time ? `${block.time} · ` : ''}${block.label}</span><span class="b-preview"></span>`;
-    } else {
-      const prev = (block.content || '').split('\n')[0].replace(/^[-–]\s*/, '').slice(0, 45);
-      inner += `<span class="b-tag">${block.tag}</span><span class="b-preview">${prev || '—'}</span>`;
+    const handle = document.createElement('span');
+    handle.className = 'b-handle';
+    handle.textContent = '⠿';
+    handle.title = 'Glisser pour déplacer';
+
+    const main = document.createElement('div');
+    main.className = 'b-main';
+    const mainHead = document.createElement('div');
+    mainHead.className = 'b-main-head';
+    const label = document.createElement('span');
+    label.className = block.type === 'break' ? 'b-break' : 'b-tag';
+    label.textContent = block.type === 'break' ? block.label : block.tag;
+    mainHead.appendChild(label);
+    if (block.time) {
+      const time = document.createElement('span');
+      time.className = 'b-time';
+      time.textContent = block.time;
+      mainHead.appendChild(time);
     }
-    inner += `<div class="b-actions">`;
+    main.appendChild(mainHead);
     if (block.type !== 'break') {
-      inner += `<button class="b-btn edit" title="Modifier">✏️</button>`;
+      const preview = document.createElement('div');
+      preview.className = 'b-preview';
+      preview.textContent = (block.content || '').split('\n')[0].replace(/^[-–]\s*/, '') || 'Aucun détail';
+      main.appendChild(preview);
     }
-    inner += `<button class="b-btn del" title="Supprimer">✕</button></div>`;
-    row.innerHTML = inner;
+
+    const actions = document.createElement('div');
+    actions.className = 'b-actions';
+    const action = (className, labelText, icon) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `b-btn ${className}`;
+      button.title = labelText;
+      button.setAttribute('aria-label', labelText);
+      button.textContent = icon;
+      actions.appendChild(button);
+      return button;
+    };
+    const up = action('up', 'Monter ce bloc', '↑');
+    const down = action('down', 'Descendre ce bloc', '↓');
+    up.disabled = i === 0;
+    down.disabled = i === blocks.length - 1;
+    let editBtn = null;
+    if (block.type !== 'break') editBtn = action('edit', `Modifier ${block.tag}`, '✎');
+    const deleteBtn = action('del', `Supprimer ${block.type === 'break' ? block.label : block.tag}`, '🗑');
+    row.append(handle, main, actions);
 
     /* Edit */
-    const editBtn = row.querySelector('.b-btn.edit');
-    if (editBtn) editBtn.addEventListener('click', () => startEdit(i));
+    if (editBtn) editBtn.addEventListener('click', event => {
+      event.stopPropagation();
+      startEdit(i);
+    });
+    if (block.type !== 'break') row.addEventListener('click', () => startEdit(i));
+
+    const moveTo = toIndex => {
+      const result = applyJournalOperations([{
+        type: 'moveBlock', weekKey: weekKey(), day: editDay, blockId: block.id, toIndex
+      }], { atomic: true });
+      if (result.errors.length) { toast('Déplacement impossible'); return; }
+      cancelEdit();
+      save(); renderJournal(); renderBlocks();
+      toast('Bloc déplacé');
+    };
+    up.addEventListener('click', event => { event.stopPropagation(); if (i > 0) moveTo(i - 1); });
+    down.addEventListener('click', event => { event.stopPropagation(); if (i < blocks.length - 1) moveTo(i + 1); });
 
     /* Delete */
-    row.querySelector('.b-btn.del').addEventListener('click', () => {
+    deleteBtn.addEventListener('click', event => {
+      event.stopPropagation();
+      const name = block.type === 'break' ? block.label : block.tag;
+      if (!confirm(`Supprimer « ${name} » du ${editDay.toLowerCase()} ?`)) return;
       const result = applyJournalOperations([{
         type: 'deleteBlock', weekKey: weekKey(), day: editDay, blockId: block.id
       }], { atomic: true });
       if (result.errors.length) { toast('Suppression impossible'); return; }
-      if (editingIdx === i) cancelEdit();
+      cancelEdit();
       save(); renderJournal(); renderBlocks();
-      toast('Bloc supprimé');
+      toast(`« ${name} » supprimé`);
     });
 
     /* Drag */
@@ -1694,6 +1800,7 @@ function renderBlocks() {
         type: 'moveBlock', weekKey: weekKey(), day: editDay, blockId: moved.id, toIndex: i
       }], { atomic: true });
       if (result.errors.length) { toast('Déplacement impossible'); return; }
+      cancelEdit();
       save(); renderJournal(); renderBlocks();
     });
 
@@ -1708,7 +1815,8 @@ function renderDayTabs() {
   const tabs = document.getElementById('day-tabs');
   tabs.innerHTML = '';
   DAYS.forEach(d => {
-    const t = document.createElement('div');
+    const t = document.createElement('button');
+    t.type = 'button';
     t.className = 'day-tab' + (d === editDay ? ' active' : '');
     t.textContent = d;
     t.addEventListener('click', () => switchDay(d));
@@ -1719,6 +1827,7 @@ function renderDayTabs() {
 function switchDay(day) {
   editDay = day;
   cancelEdit();
+  document.getElementById('panel-title').textContent = `✏️ Édition du ${day.toLowerCase()}`;
   renderDayTabs();
   renderBlocks();
   if (!panelOpen) openPanel();
@@ -1727,33 +1836,89 @@ function switchDay(day) {
 /* ═══════════════════════════════════════
    EDIT MODE
 ═══════════════════════════════════════ */
+function renderActivityFormDocuments(block) {
+  const container = document.getElementById('activity-form-documents');
+  const list = document.getElementById('activity-form-document-list');
+  const documents = block && Array.isArray(block.documents) ? block.documents : [];
+  list.innerHTML = '';
+  container.hidden = documents.length === 0;
+  documents.forEach(associatedDocument => {
+    const row = document.createElement('div');
+    row.className = 'editor-form-document';
+    const link = document.createElement('a');
+    link.href = associatedDocument.url;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = associatedDocument.title;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.title = 'Retirer ce document de l’activité';
+    remove.setAttribute('aria-label', `Retirer ${associatedDocument.title}`);
+    remove.textContent = '✕';
+    remove.addEventListener('click', () => {
+      if (!confirm(`Retirer « ${associatedDocument.title} » de cette activité ?`)) return;
+      const result = applyJournalOperations([{
+        type: 'detachDocument', weekKey: weekKey(), day: editDay, blockId: block.id,
+        provider: associatedDocument.provider, fileId: associatedDocument.fileId
+      }], { atomic: true });
+      if (result.errors.length) { toast('Retrait impossible'); return; }
+      save(); renderJournal(); renderBlocks();
+      const updated = getDayData(editDay).blocks.find(item => item.id === block.id);
+      renderActivityFormDocuments(updated);
+      toast('Document retiré');
+    });
+    row.append(link, remove);
+    list.appendChild(row);
+  });
+}
+
+function showActivityForm() {
+  document.getElementById('activity-form').hidden = false;
+  document.getElementById('activity-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function startNewActivity() {
+  cancelEdit();
+  renderActivityFormDocuments(null);
+  document.getElementById('activity-form-title').textContent = 'Nouvelle activité';
+  document.getElementById('btn-submit').textContent = 'Ajouter l’activité';
+  showActivityForm();
+  document.getElementById('input-tag').focus();
+}
+
 function startEdit(i) {
   const block = getDayData(editDay).blocks[i];
   if (!block || block.type === 'break') return;
   editingIdx = i;
   document.getElementById('input-tag').value = block.tag;
+  document.getElementById('input-time').value = block.time || '';
   const ta = document.getElementById('input-content');
   ta.value = block.content || '';
   autoResize(ta);
-  document.getElementById('btn-submit').textContent = '✓ Mettre à jour';
+  renderActivityFormDocuments(block);
+  document.getElementById('activity-form-title').textContent = `Modifier « ${block.tag} »`;
+  document.getElementById('btn-submit').textContent = 'Enregistrer les modifications';
   document.getElementById('btn-submit').classList.add('update');
-  document.getElementById('btn-cancel').classList.add('visible');
+  showActivityForm();
+  renderBlocks();
   document.getElementById('input-tag').focus();
-  // Scroll form into view
-  document.querySelector('.psec:nth-child(4)').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function cancelEdit() {
   editingIdx = null;
   document.getElementById('input-tag').value = '';
+  document.getElementById('input-time').value = '';
   document.getElementById('input-content').value = '';
-  document.getElementById('btn-submit').textContent = '+ Ajouter';
+  renderActivityFormDocuments(null);
+  document.getElementById('activity-form').hidden = true;
+  document.getElementById('activity-form-title').textContent = 'Nouvelle activité';
+  document.getElementById('btn-submit').textContent = 'Ajouter l’activité';
   document.getElementById('btn-submit').classList.remove('update');
-  document.getElementById('btn-cancel').classList.remove('visible');
 }
 
 function submitActivity() {
   const tag = document.getElementById('input-tag').value.trim();
+  const time = document.getElementById('input-time').value.trim();
   const content = document.getElementById('input-content').value.trim();
   if (!tag) { document.getElementById('input-tag').focus(); return; }
 
@@ -1762,7 +1927,7 @@ function submitActivity() {
   if (editingIdx !== null) {
     const result = applyJournalOperations([{
       type: 'updateBlock', weekKey: weekKey(), day: editDay,
-      blockId: blocks[editingIdx].id, changes: { tag, content }
+      blockId: blocks[editingIdx].id, changes: { tag, time, content }
     }], { atomic: true });
     if (result.errors.length) { toast('Mise à jour impossible'); return; }
     toast(`"${tag}" mis à jour`);
@@ -1770,13 +1935,11 @@ function submitActivity() {
   } else {
     const result = applyJournalOperations([{
       type: 'addBlock', weekKey: weekKey(), day: editDay,
-      block: { type: 'subject', tag, content, documents: [] }
+      block: { type: 'subject', tag, time, content, documents: [] }
     }], { atomic: true });
     if (result.errors.length) { toast('Ajout impossible'); return; }
     toast(`"${tag}" ajouté`);
-    document.getElementById('input-tag').value = '';
-    document.getElementById('input-content').value = '';
-    document.getElementById('input-tag').focus();
+    cancelEdit();
   }
   save(); renderJournal(); renderBlocks();
 }
@@ -1787,9 +1950,11 @@ function submitActivity() {
 function openPanel() {
   panelOpen = true;
   document.getElementById('edit-panel').classList.add('open');
+  document.getElementById('overlay').classList.add('visible');
   document.getElementById('btn-toggle-edit').classList.add('on');
   document.getElementById('btn-toggle-edit').textContent = '✓ Terminer';
   document.body.classList.add('edit-mode', 'panel-open');
+  document.getElementById('panel-title').textContent = `✏️ Édition du ${editDay.toLowerCase()}`;
   renderDayTabs();
   renderBlocks();
 }
@@ -2062,6 +2227,8 @@ document.getElementById('btn-collapse').addEventListener('click', () => {
 
 document.getElementById('btn-submit').addEventListener('click', submitActivity);
 document.getElementById('btn-cancel').addEventListener('click', cancelEdit);
+document.getElementById('btn-new-activity').addEventListener('click', startNewActivity);
+document.getElementById('activity-form-close').addEventListener('click', cancelEdit);
 
 /* Ctrl+Enter in textarea */
 document.getElementById('input-content').addEventListener('keydown', e => {
@@ -2078,6 +2245,7 @@ document.getElementById('input-content').addEventListener('input', function() { 
 /* Break buttons */
 document.querySelectorAll('.break-btn').forEach(btn => {
   btn.addEventListener('click', () => {
+    cancelEdit();
     const result = applyJournalOperations([{
       type: 'addBlock', weekKey: weekKey(), day: editDay,
       block: { type: 'break', label: btn.dataset.break }
