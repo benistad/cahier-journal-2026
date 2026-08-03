@@ -252,7 +252,7 @@
     }
     .day-header .btn-edit-day:hover { background: rgba(255,255,255,.35); }
     body.edit-mode .day-header .btn-edit-day { display: inline-block; }
-    body.edit-mode .day-header .day-count { display: none; }
+    body.edit-mode .day-header .day-count { display: inline-block; }
 
     .day-body { background: #fff; }
     .day-body.hidden { display: none; }
@@ -287,8 +287,8 @@
       font-variant-numeric: tabular-nums; min-width: 70px; text-align: right;
     }
     .act-block:last-child { border-bottom: none; }
-    body.edit-mode .act-block { cursor: pointer; }
-    body.edit-mode .act-block:hover { background: #f0f4ff; }
+    body.edit-mode .act-block { cursor: default; padding-right: 9px; }
+    body.edit-mode .act-block:hover { background: #fafbff; }
     .tag {
       background: var(--tag-bg); border: 1px solid var(--tag-bd);
       color: var(--tag-col); font-size: .74rem; font-weight: 700;
@@ -332,7 +332,7 @@
     }
     .act-content .act-docs a:hover { background: #dde8ff; text-decoration: none; }
     .act-edit-hint { font-size: .7rem; color: #bbb; margin-left: auto; flex-shrink: 0; display: none; align-self: center; }
-    body.edit-mode .act-edit-hint { display: block; }
+    body.edit-mode .act-edit-hint { display: none; }
 
     /* ── BREAK BANNER ── */
     .break-banner {
@@ -344,6 +344,83 @@
     }
     .break-banner:last-child { border-bottom: none; }
 
+    /* ── ÉDITION DIRECTE DANS LE CAHIER ── */
+    #direct-edit-bar {
+      display: none; position: sticky; top: 50px; z-index: 80; align-items: center;
+      gap: 8px; padding: 8px 14px; background: #eef2ff; border-bottom: 1px solid #c7d2fe;
+      color: #3730a3; box-shadow: 0 3px 10px rgba(30,42,74,.08);
+    }
+    body.edit-mode #direct-edit-bar { display: flex; }
+    #direct-edit-bar strong { font-size: .76rem; }
+    #direct-edit-bar span { flex: 1; font-size: .7rem; color: #64748b; }
+    .direct-bar-btn {
+      border: 1px solid #c7d2fe; border-radius: 7px; background: #fff; color: #3730a3;
+      padding: 6px 9px; font-size: .7rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+    }
+    .day-direct-tools {
+      display: none; align-items: center; gap: 6px; flex-wrap: wrap;
+      padding: 8px 12px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;
+    }
+    body.edit-mode .day-direct-tools { display: flex; }
+    .day-direct-tools button {
+      border: 1px solid #dbe2ea; border-radius: 7px; background: #fff; color: #475569;
+      padding: 6px 9px; font-size: .7rem; font-weight: 700; cursor: pointer;
+    }
+    .day-direct-tools .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .day-direct-tools .pause { background: var(--break-bg); border-color: var(--break-bd); color: var(--break-col); }
+    .day-direct-tools .danger { margin-left: auto; color: #b91c1c; }
+    .direct-block-actions {
+      display: none; align-items: center; gap: 4px; margin-left: auto; flex-shrink: 0;
+    }
+    body.edit-mode .direct-block-actions { display: flex; }
+    .direct-action {
+      width: 30px; height: 30px; display: inline-grid; place-items: center;
+      border: 1px solid #dbe2ea; border-radius: 7px; background: #fff; color: #64748b;
+      cursor: pointer; font-size: .76rem;
+    }
+    .direct-action:hover { color: #1e3a8a; border-color: #93c5fd; background: #eff6ff; }
+    .direct-action.danger:hover { color: #b91c1c; border-color: #fca5a5; background: #fef2f2; }
+    .direct-action:disabled { opacity: .25; cursor: default; }
+    .break-banner.direct-editable { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 5px 10px 5px 130px; }
+    .break-banner.direct-editable .break-label { flex: 1; text-align: center; }
+    .break-banner.direct-editable .direct-block-actions { margin-left: 0; }
+    .inline-insert {
+      display: none; height: 16px; position: relative; border: 0; width: 100%;
+      background: transparent; cursor: pointer;
+    }
+    body.edit-mode .inline-insert { display: block; }
+    .inline-insert::before { content: ''; position: absolute; left: 18px; right: 18px; top: 7px; border-top: 1px dashed #cbd5e1; }
+    .inline-insert span {
+      position: relative; display: inline-grid; place-items: center; width: 18px; height: 18px;
+      margin-top: -1px; border-radius: 50%; background: #fff; border: 1px solid #cbd5e1;
+      color: #64748b; font-size: .75rem; opacity: .55;
+    }
+    .inline-insert:hover span { opacity: 1; color: var(--accent); border-color: var(--accent); }
+    .inline-activity-form {
+      margin: 10px 14px; padding: 14px; border: 2px solid #93a9dc; border-radius: 11px;
+      background: #f8faff; box-shadow: 0 8px 24px rgba(79,111,186,.14);
+    }
+    .inline-form-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .inline-form-head strong { flex: 1; color: #27345e; font-size: .86rem; }
+    .inline-fields { display: grid; grid-template-columns: minmax(130px,.7fr) minmax(115px,.45fr) minmax(260px,2fr); gap: 9px; align-items: end; }
+    .inline-field label { display: block; color: #64748b; font-size: .67rem; font-weight: 700; margin-bottom: 3px; }
+    .inline-field input, .inline-field textarea {
+      width: 100%; border: 1px solid #cbd5e1; border-radius: 7px; padding: 8px 9px;
+      background: #fff; font: inherit; font-size: .8rem; resize: vertical;
+    }
+    .inline-field textarea { min-height: 58px; }
+    .inline-field input:focus, .inline-field textarea:focus { outline: 3px solid #dbeafe; border-color: var(--accent); }
+    .inline-quick-subjects { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 9px; }
+    .inline-quick-subjects button { border: 1px solid var(--tag-bd); border-radius: 5px; background: var(--tag-bg); color: var(--tag-col); padding: 3px 7px; font-size: .66rem; font-weight: 700; cursor: pointer; }
+    .inline-form-actions { display: flex; justify-content: flex-end; gap: 7px; margin-top: 10px; }
+    .inline-form-actions button { border: 0; border-radius: 7px; padding: 8px 12px; font-weight: 700; cursor: pointer; }
+    .inline-save { background: #15803d; color: #fff; }
+    .inline-cancel { background: #e2e8f0; color: #475569; }
+    .inline-documents { margin-top: 9px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .inline-document { display: inline-flex; align-items: center; gap: 4px; border: 1px solid #bfdbfe; border-radius: 16px; background: #eff6ff; padding: 3px 7px; }
+    .inline-document a { color: #1d4ed8; font-size: .68rem; text-decoration: none; }
+    .inline-document button { border: 0; background: transparent; color: #b91c1c; cursor: pointer; }
+
     /* ── EMPTY STATE ── */
     .empty-state { text-align: center; color: #ccc; padding: 30px 20px; font-size: .88rem; }
 
@@ -351,10 +428,10 @@
     #edit-panel {
       position: fixed; right: 0; top: 0; bottom: 0; width: 440px;
       background: #fff; box-shadow: -6px 0 24px rgba(0,0,0,.15);
-      z-index: 200; display: flex; flex-direction: column;
+      z-index: 200; display: none; flex-direction: column;
       transform: translateX(100%); transition: transform .25s ease;
     }
-    #edit-panel.open { transform: translateX(0); }
+    #edit-panel.open { display: none; transform: translateX(0); }
 
     .panel-head {
       background: var(--panel-bg); color: #fff;
@@ -553,6 +630,18 @@
     #toast.show { transform: translateX(-50%) translateY(0); }
 
     @media (max-width: 760px) {
+      #direct-edit-bar { top: 48px; flex-wrap: wrap; }
+      #direct-edit-bar span { flex-basis: 100%; order: 2; }
+      .direct-bar-btn { flex: 1; }
+      .day-direct-tools .danger { margin-left: 0; }
+      .inline-fields { grid-template-columns: 1fr; }
+      .inline-activity-form { margin: 8px; padding: 11px; }
+      .direct-action { width: 36px; height: 36px; }
+      .act-block { flex-wrap: wrap; }
+      .act-content { min-width: calc(100% - 95px); }
+      body.edit-mode .direct-block-actions { width: 100%; justify-content: flex-end; }
+      .break-banner.direct-editable { padding-left: 10px; flex-wrap: wrap; }
+      .break-banner.direct-editable .break-label { min-width: 100%; }
       #edit-panel { width: 100%; }
       .editor-toolbar { padding: 9px; }
       .editor-toolbar .break-btn { padding: 8px; font-size: .7rem; }
@@ -615,6 +704,15 @@
     <button class="icon-btn" id="btn-collapse" title="Tout replier / déplier">⊟</button>
     <button class="btn-primary" id="btn-toggle-edit">✏️ Éditer</button>
   </div>
+</div>
+
+<div id="direct-edit-bar" aria-label="Outils d’édition directe">
+  <strong>✏️ Édition directe</strong>
+  <span>Clique sur ✎ dans une activité, ou sur ＋ entre deux blocs.</span>
+  <button class="direct-bar-btn" id="direct-export" type="button">💾 Exporter</button>
+  <button class="direct-bar-btn" id="direct-import" type="button">📂 Importer</button>
+  <button class="direct-bar-btn" id="direct-copy-prev" type="button">📋 Semaine précédente</button>
+  <input type="file" id="direct-import-input" accept=".json" hidden>
 </div>
 
 <div id="sync-conflict" role="alert">
@@ -842,6 +940,8 @@ let weekOffset = 0;      // relative to this week's Monday
 let editDay = 'Lundi';
 let panelOpen = false;
 let editingIdx = null;   // null = add mode, number = edit mode
+let directEditMode = false;
+let inlineEditor = null; // { mode: 'add'|'edit', day, index?, blockId? }
 let allCollapsed = false;
 let dragSrc = null;
 let supabaseClient = null;
@@ -1582,6 +1682,264 @@ async function initializeSupabase() {
 }
 
 /* ═══════════════════════════════════════
+   ÉDITION DIRECTE DANS LE CAHIER
+═══════════════════════════════════════ */
+function setDirectEditMode(enabled) {
+  directEditMode = enabled;
+  inlineEditor = null;
+  panelOpen = false;
+  document.getElementById('edit-panel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('visible');
+  document.body.classList.toggle('edit-mode', enabled);
+  document.body.classList.remove('panel-open');
+  const button = document.getElementById('btn-toggle-edit');
+  button.classList.toggle('on', enabled);
+  button.textContent = enabled ? '✓ Terminer' : '✏️ Éditer';
+  renderJournal();
+}
+
+function startInlineAdd(day, index) {
+  editDay = day;
+  inlineEditor = { mode: 'add', day, index };
+  renderJournal();
+  requestAnimationFrame(() => {
+    const input = document.querySelector('.inline-activity-form input[name="tag"]');
+    if (input) input.focus();
+  });
+}
+
+function startInlineEdit(day, blockId) {
+  editDay = day;
+  inlineEditor = { mode: 'edit', day, blockId };
+  renderJournal();
+  requestAnimationFrame(() => {
+    const input = document.querySelector('.inline-activity-form input[name="tag"]');
+    if (input) { input.focus(); input.select(); }
+  });
+}
+
+function cancelInlineEdit() {
+  inlineEditor = null;
+  renderJournal();
+}
+
+function moveDirectBlock(day, block, toIndex) {
+  const result = applyJournalOperations([{
+    type: 'moveBlock', weekKey: weekKey(), day, blockId: block.id, toIndex
+  }], { atomic: true });
+  if (result.errors.length) { toast('Déplacement impossible'); return; }
+  inlineEditor = null;
+  save(); renderJournal(); toast('Bloc déplacé');
+}
+
+function deleteDirectBlock(day, block) {
+  const name = block.type === 'break' ? block.label : block.tag;
+  if (!confirm(`Supprimer « ${name} » du ${day.toLowerCase()} ?`)) return;
+  const result = applyJournalOperations([{
+    type: 'deleteBlock', weekKey: weekKey(), day, blockId: block.id
+  }], { atomic: true });
+  if (result.errors.length) { toast('Suppression impossible'); return; }
+  inlineEditor = null;
+  save(); renderJournal(); toast(`« ${name} » supprimé`);
+}
+
+function addDirectBreak(day, label, index) {
+  const result = applyJournalOperations([{
+    type: 'addBlock', weekKey: weekKey(), day, index,
+    block: { type: 'break', label }
+  }], { atomic: true });
+  if (result.errors.length) { toast('Ajout impossible'); return; }
+  inlineEditor = null;
+  save(); renderJournal(); toast(`${label} ajouté`);
+}
+
+function detachInlineDocument(day, block, associatedDocument) {
+  if (!confirm(`Retirer « ${associatedDocument.title} » de cette activité ?`)) return;
+  const result = applyJournalOperations([{
+    type: 'detachDocument', weekKey: weekKey(), day, blockId: block.id,
+    provider: associatedDocument.provider, fileId: associatedDocument.fileId
+  }], { atomic: true });
+  if (result.errors.length) { toast('Retrait impossible'); return; }
+  save(); renderJournal(); toast('Document retiré');
+}
+
+function createDirectAction(label, icon, handler, options = {}) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = `direct-action${options.danger ? ' danger' : ''}`;
+  button.title = label;
+  button.setAttribute('aria-label', label);
+  button.textContent = icon;
+  button.disabled = Boolean(options.disabled);
+  button.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!button.disabled) handler();
+  });
+  return button;
+}
+
+function createDirectBlockActions(day, block, index, count) {
+  const actions = document.createElement('div');
+  actions.className = 'direct-block-actions';
+  actions.appendChild(createDirectAction('Monter', '↑', () => moveDirectBlock(day, block, index - 1), { disabled: index === 0 }));
+  actions.appendChild(createDirectAction('Descendre', '↓', () => moveDirectBlock(day, block, index + 1), { disabled: index === count - 1 }));
+  if (block.type !== 'break') {
+    actions.appendChild(createDirectAction(`Modifier ${block.tag}`, '✎', () => startInlineEdit(day, block.id)));
+  }
+  actions.appendChild(createDirectAction('Supprimer', '🗑', () => deleteDirectBlock(day, block), { danger: true }));
+  return actions;
+}
+
+function createInlineInsert(day, index) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'inline-insert';
+  button.title = 'Ajouter une activité ici';
+  button.setAttribute('aria-label', `Ajouter une activité en position ${index + 1}`);
+  const icon = document.createElement('span');
+  icon.textContent = '+';
+  button.appendChild(icon);
+  button.addEventListener('click', () => startInlineAdd(day, index));
+  return button;
+}
+
+function createInlineActivityForm(day, editor, block) {
+  const form = document.createElement('form');
+  form.className = 'inline-activity-form';
+  form.addEventListener('click', event => event.stopPropagation());
+
+  const head = document.createElement('div');
+  head.className = 'inline-form-head';
+  const title = document.createElement('strong');
+  title.textContent = editor.mode === 'edit' ? `Modifier « ${block.tag} »` : 'Nouvelle activité';
+  const shortcut = document.createElement('span');
+  shortcut.className = 'kbd';
+  shortcut.textContent = 'Ctrl/⌘ + Entrée';
+  head.append(title, shortcut);
+
+  const fields = document.createElement('div');
+  fields.className = 'inline-fields';
+  const makeField = (labelText, name, element) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'inline-field';
+    const label = document.createElement('label');
+    label.textContent = labelText;
+    label.htmlFor = `${name}-${day}-${editor.mode}`;
+    element.id = label.htmlFor;
+    element.name = name;
+    wrap.append(label, element);
+    return wrap;
+  };
+  const tag = document.createElement('input');
+  tag.type = 'text';
+  tag.required = true;
+  tag.autocomplete = 'off';
+  tag.placeholder = 'Matière';
+  tag.value = block ? block.tag : '';
+  const time = document.createElement('input');
+  time.type = 'text';
+  time.autocomplete = 'off';
+  time.placeholder = '9h15 – 9h45';
+  time.value = block && block.time ? block.time : '';
+  const content = document.createElement('textarea');
+  content.placeholder = 'Décris l’activité…';
+  content.value = block ? block.content || '' : '';
+  fields.append(makeField('Matière', 'tag', tag), makeField('Horaire (facultatif)', 'time', time), makeField('Contenu', 'content', content));
+
+  const quick = document.createElement('div');
+  quick.className = 'inline-quick-subjects';
+  QUICK_SUBJECTS.forEach(subject => {
+    const choice = document.createElement('button');
+    choice.type = 'button';
+    choice.textContent = subject;
+    choice.addEventListener('click', () => { tag.value = subject; content.focus(); });
+    quick.appendChild(choice);
+  });
+
+  form.append(head, fields, quick);
+  if (block && Array.isArray(block.documents) && block.documents.length) {
+    const documents = document.createElement('div');
+    documents.className = 'inline-documents';
+    block.documents.forEach(associatedDocument => {
+      const chip = document.createElement('span');
+      chip.className = 'inline-document';
+      const link = document.createElement('a');
+      link.href = associatedDocument.url;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = associatedDocument.title;
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.title = 'Retirer ce document';
+      remove.textContent = '✕';
+      remove.addEventListener('click', () => detachInlineDocument(day, block, associatedDocument));
+      chip.append(link, remove);
+      documents.appendChild(chip);
+    });
+    form.appendChild(documents);
+  }
+
+  const actions = document.createElement('div');
+  actions.className = 'inline-form-actions';
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  cancel.className = 'inline-cancel';
+  cancel.textContent = 'Annuler';
+  cancel.addEventListener('click', cancelInlineEdit);
+  const submit = document.createElement('button');
+  submit.type = 'submit';
+  submit.className = 'inline-save';
+  submit.textContent = editor.mode === 'edit' ? 'Enregistrer' : 'Ajouter ici';
+  actions.append(cancel, submit);
+  form.appendChild(actions);
+
+  form.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      form.requestSubmit();
+    }
+  });
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    const changes = { tag: tag.value.trim(), time: time.value.trim(), content: content.value.trim() };
+    if (!changes.tag) { tag.focus(); return; }
+    const operation = editor.mode === 'edit'
+      ? { type: 'updateBlock', weekKey: weekKey(), day, blockId: block.id, changes }
+      : { type: 'addBlock', weekKey: weekKey(), day, index: editor.index, block: { type: 'subject', ...changes, documents: [] } };
+    const result = applyJournalOperations([operation], { atomic: true });
+    if (result.errors.length) { toast('Enregistrement impossible'); return; }
+    inlineEditor = null;
+    save(); renderJournal(); toast(editor.mode === 'edit' ? 'Activité mise à jour' : 'Activité ajoutée');
+  });
+  return form;
+}
+
+function createDayDirectTools(day, blockCount) {
+  const tools = document.createElement('div');
+  tools.className = 'day-direct-tools';
+  const addButton = (label, className, handler) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = className;
+    button.textContent = label;
+    button.addEventListener('click', handler);
+    tools.appendChild(button);
+  };
+  addButton('＋ Activité', 'primary', () => startInlineAdd(day, blockCount));
+  addButton('Récréation', 'pause', () => addDirectBreak(day, 'RECREATION', blockCount));
+  addButton('Pause midi', 'pause', () => addDirectBreak(day, 'PAUSE MERIDIENNE', blockCount));
+  addButton('📎 Fichier', '', () => { editDay = day; document.getElementById('file-input').click(); });
+  addButton('🗑 Vider', 'danger', () => {
+    if (!confirm(`Effacer tous les blocs de ${day} ?`)) return;
+    getDayData(day).blocks = [];
+    inlineEditor = null;
+    save(); renderJournal(); toast(`${day} vidé`);
+  });
+  return tools;
+}
+
+/* ═══════════════════════════════════════
    RENDER JOURNAL
 ═══════════════════════════════════════ */
 function renderJournal() {
@@ -1604,17 +1962,10 @@ function renderJournal() {
       <span class="arrow">▼</span>
       <span class="day-name">${day}</span>
       <span class="day-date">${dayDate(key, i)}</span>
-      <button class="btn-edit-day" data-day="${day}">✏️ Éditer ce jour</button>
       <span class="day-count">${nonEmpty ? nonEmpty + ' activité' + (nonEmpty > 1 ? 's' : '') : 'vide'}</span>
     `;
 
-    header.querySelector('.btn-edit-day').addEventListener('click', (e) => {
-      e.stopPropagation();
-      switchDay(day);
-    });
-
-    header.addEventListener('click', (e) => {
-      if (e.target.classList.contains('btn-edit-day')) return;
+    header.addEventListener('click', () => {
       header.classList.toggle('collapsed');
       body.classList.toggle('hidden');
     });
@@ -1623,6 +1974,7 @@ function renderJournal() {
     const body = document.createElement('div');
     body.className = 'day-body';
     if (allCollapsed) { header.classList.add('collapsed'); body.classList.add('hidden'); }
+    body.appendChild(createDayDirectTools(day, (dd.blocks || []).length));
 
     /* Attachments */
     if (dd.attachments && dd.attachments.length) {
@@ -1643,7 +1995,7 @@ function renderJournal() {
         chip.querySelector('.att-del').addEventListener('click', (e) => {
           e.preventDefault(); e.stopPropagation();
           dd.attachments.splice(ai, 1);
-          save(); renderJournal(); renderBlocks();
+          save(); renderJournal();
         });
         zone.appendChild(chip);
       });
@@ -1651,17 +2003,33 @@ function renderJournal() {
     }
 
     /* Blocks */
-    if (!dd.blocks || dd.blocks.length === 0) {
+    const blocks = dd.blocks || [];
+    if (blocks.length === 0 && !(inlineEditor && inlineEditor.day === day && inlineEditor.mode === 'add')) {
       const emp = document.createElement('div');
       emp.className = 'empty-state';
       emp.textContent = 'Aucune activité pour ce jour.';
       body.appendChild(emp);
     } else {
-      dd.blocks.forEach((block, bi) => {
+      blocks.forEach((block, bi) => {
+        if (directEditMode) {
+          if (inlineEditor && inlineEditor.day === day && inlineEditor.mode === 'add' && inlineEditor.index === bi) {
+            body.appendChild(createInlineActivityForm(day, inlineEditor, null));
+          } else {
+            body.appendChild(createInlineInsert(day, bi));
+          }
+        }
+        if (inlineEditor && inlineEditor.day === day && inlineEditor.mode === 'edit' && inlineEditor.blockId === block.id) {
+          body.appendChild(createInlineActivityForm(day, inlineEditor, block));
+          return;
+        }
         if (block.type === 'break') {
           const banner = document.createElement('div');
-          banner.className = 'break-banner';
-          banner.textContent = `${block.time ? `${block.time} · ` : ''}${block.label}`;
+          banner.className = `break-banner${directEditMode ? ' direct-editable' : ''}`;
+          const label = document.createElement('span');
+          label.className = 'break-label';
+          label.textContent = `${block.time ? `${block.time} · ` : ''}${block.label}`;
+          banner.appendChild(label);
+          if (directEditMode) banner.appendChild(createDirectBlockActions(day, block, bi, blocks.length));
           body.appendChild(banner);
         } else {
           const row = document.createElement('div');
@@ -1670,17 +2038,23 @@ function renderJournal() {
             ${block.time ? `<span class="act-time">${block.time}</span>` : ''}
             <span class="tag">${block.tag}</span>
             <div class="act-content">${parseContent(block.content)}</div>
-            <span class="act-edit-hint">✏️</span>
           `;
           appendBlockDocuments(row.querySelector('.act-content'), block);
-          row.addEventListener('click', () => {
-            if (!document.body.classList.contains('edit-mode')) return;
-            switchDay(day);   // opens panel if closed
-            startEdit(bi);
+          if (directEditMode) row.appendChild(createDirectBlockActions(day, block, bi, blocks.length));
+          row.addEventListener('click', event => {
+            if (!directEditMode || event.target.closest('a, button')) return;
+            startInlineEdit(day, block.id);
           });
           body.appendChild(row);
         }
       });
+      if (directEditMode) {
+        if (inlineEditor && inlineEditor.day === day && inlineEditor.mode === 'add' && inlineEditor.index === blocks.length) {
+          body.appendChild(createInlineActivityForm(day, inlineEditor, null));
+        } else {
+          body.appendChild(createInlineInsert(day, blocks.length));
+        }
+      }
     }
 
     section.appendChild(header);
@@ -1961,6 +2335,8 @@ function openPanel() {
 
 function closePanel() {
   panelOpen = false;
+  directEditMode = false;
+  inlineEditor = null;
   cancelEdit();
   document.getElementById('edit-panel').classList.remove('open');
   document.getElementById('overlay').classList.remove('visible');
@@ -2209,13 +2585,13 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-document.getElementById('btn-toggle-edit').addEventListener('click', () => panelOpen ? closePanel() : openPanel());
+document.getElementById('btn-toggle-edit').addEventListener('click', () => setDirectEditMode(!directEditMode));
 document.getElementById('btn-close-panel').addEventListener('click', closePanel);
 document.getElementById('overlay').addEventListener('click', closePanel);
 
-document.getElementById('btn-prev').addEventListener('click', () => { weekOffset--; update(); });
-document.getElementById('btn-next').addEventListener('click', () => { weekOffset++; update(); });
-document.getElementById('btn-today').addEventListener('click', () => { weekOffset = 0; update(); toast('Semaine actuelle'); });
+document.getElementById('btn-prev').addEventListener('click', () => { inlineEditor = null; weekOffset--; update(); });
+document.getElementById('btn-next').addEventListener('click', () => { inlineEditor = null; weekOffset++; update(); });
+document.getElementById('btn-today').addEventListener('click', () => { inlineEditor = null; weekOffset = 0; update(); toast('Semaine actuelle'); });
 
 document.getElementById('btn-collapse').addEventListener('click', () => {
   allCollapsed = !allCollapsed;
@@ -2276,6 +2652,12 @@ document.getElementById('btn-import-btn').addEventListener('click', () => docume
 document.getElementById('import-input').addEventListener('change', function() {
   if (this.files[0]) { importJSON(this.files[0]); this.value = ''; }
 });
+document.getElementById('direct-export').addEventListener('click', exportJSON);
+document.getElementById('direct-import').addEventListener('click', () => document.getElementById('direct-import-input').click());
+document.getElementById('direct-import-input').addEventListener('change', function() {
+  if (this.files[0]) { importJSON(this.files[0]); this.value = ''; }
+});
+document.getElementById('direct-copy-prev').addEventListener('click', copyPrevWeek);
 
 /* Copy previous week */
 document.getElementById('btn-copy-prev').addEventListener('click', copyPrevWeek);

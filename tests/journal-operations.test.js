@@ -39,6 +39,20 @@ test('ajout, modification, déplacement et suppression de bloc fonctionnent sur 
   assert.equal(JSON.stringify(original), originalJson);
 });
 
+test('une activité peut être insérée directement entre deux blocs', () => {
+  const original = state();
+  const result = CJOperations.applyOperations(original, [{
+    type: 'addBlock', weekKey: '2026-06-15', day: 'Lundi', index: 1,
+    block: { type: 'subject', tag: 'Dictée', time: '9h15 – 9h45', content: 'Correction collective.', documents: [] }
+  }], { atomic: true, idFactory: () => 'inline-block-id' });
+
+  assert.equal(result.errors.length, 0);
+  assert.deepEqual(
+    result.data.weeks['2026-06-15'].Lundi.blocks.map(block => block.id),
+    [original.weeks['2026-06-15'].Lundi.blocks[0].id, 'inline-block-id', original.weeks['2026-06-15'].Lundi.blocks[1].id]
+  );
+});
+
 test('association puis retrait d’un document normalisé fonctionnent', () => {
   const original = state();
   const blockId = original.weeks['2026-06-15'].Lundi.blocks[0].id;
