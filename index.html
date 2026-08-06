@@ -472,6 +472,80 @@
     .inline-document a { color: #1d4ed8; font-size: .68rem; text-decoration: none; }
     .inline-document button { border: 0; background: transparent; color: #b91c1c; cursor: pointer; }
 
+    /* ── ÉDITION EXPRESS DES ACTIVITÉS ── */
+    body.edit-mode .act-block { position: relative; flex-wrap: wrap; align-items: flex-start; gap: 9px; padding: 12px 14px; }
+    .subject-picker-trigger {
+      appearance: none; font: inherit; cursor: pointer;
+      transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+    }
+    .subject-picker-trigger:hover { transform: translateY(-1px); filter: saturate(1.08); }
+    .subject-picker-trigger::after { content: '⌄'; margin-left: 6px; font-size: .72rem; opacity: .65; }
+    .subject-picker {
+      order: 20; flex: 1 0 100%; display: grid; gap: 9px; margin-top: 2px; padding: 12px;
+      border: 1px solid rgba(173,190,225,.62); border-radius: 16px;
+      background: rgba(248,250,255,.94); box-shadow: 0 16px 40px rgba(43,64,118,.14), inset 0 1px 0 #fff;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    }
+    .subject-picker-head { display: flex; gap: 7px; align-items: center; }
+    .subject-picker-search {
+      flex: 1; min-width: 0; border: 1px solid rgba(181,197,228,.78); border-radius: 11px;
+      padding: 9px 11px; color: var(--text-main); background: rgba(255,255,255,.86); font: inherit; font-size: .8rem;
+    }
+    .subject-picker-search:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(79,111,186,.11); }
+    .subject-picker-close { width: 36px; height: 36px; border: 1px solid rgba(194,206,231,.72); border-radius: 11px; background: #fff; color: #687590; cursor: pointer; }
+    .subject-picker-results { display: flex; flex-wrap: wrap; gap: 6px; max-height: 150px; overflow-y: auto; padding: 2px; }
+    .subject-picker-option { border-radius: 9px !important; padding: 6px 10px !important; font-size: .72rem !important; font-weight: 750 !important; cursor: pointer; }
+    .subject-picker-empty { color: #7b879e; font-size: .72rem; padding: 5px; }
+
+    .act-time-editor {
+      width: 84px; flex: 0 0 84px; margin-top: 0; border: 1px solid rgba(195,207,232,.74); border-radius: 10px;
+      padding: 7px 8px; color: #66738d; background: rgba(255,255,255,.7); font: inherit; font-size: .68rem;
+      font-variant-numeric: tabular-nums; text-align: center;
+    }
+    .act-time-editor:focus { outline: none; border-color: var(--accent); background: #fff; box-shadow: 0 0 0 4px rgba(79,111,186,.1); }
+    .direct-content-editor { min-width: 260px; display: grid; gap: 6px; }
+    .direct-format-toolbar { display: flex; align-items: center; gap: 5px; min-height: 30px; }
+    .format-button {
+      width: 31px; height: 29px; display: grid; place-items: center; border: 1px solid rgba(191,204,230,.74);
+      border-radius: 9px; color: #455473; background: rgba(255,255,255,.78); cursor: pointer; font-size: .75rem;
+      box-shadow: 0 3px 10px rgba(47,69,126,.055), inset 0 1px 0 #fff;
+    }
+    .format-button:hover { color: var(--accent-strong); border-color: rgba(109,137,198,.58); background: #fff; transform: translateY(-1px); }
+    .format-button.underline { text-decoration: underline; text-underline-offset: 2px; }
+    .direct-save-status { margin-left: auto; color: #8a95aa; font-size: .62rem; white-space: nowrap; }
+    .direct-save-status.saved { color: #38836c; }
+    .direct-content-textarea {
+      width: 100%; min-height: 42px; max-height: 260px; resize: vertical; overflow-y: auto;
+      border: 1px solid rgba(188,201,228,.72); border-radius: 12px; padding: 9px 10px;
+      color: #2b344b; background: rgba(255,255,255,.66); font: inherit; font-size: .86rem; line-height: 1.55;
+      box-shadow: inset 0 1px 2px rgba(40,58,104,.035); transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+    .direct-content-textarea:hover { background: rgba(255,255,255,.88); }
+    .direct-content-textarea:focus { outline: none; border-color: rgba(79,111,186,.68); background: #fff; box-shadow: 0 0 0 4px rgba(79,111,186,.10), 0 8px 22px rgba(55,79,140,.06); }
+    .block-attachments { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .block-attachment {
+      display: inline-flex; align-items: center; gap: 5px; max-width: 100%; border: 1px solid rgba(126,153,213,.27);
+      border-radius: 999px; padding: 4px 8px; background: rgba(236,242,255,.82); color: #4264ae;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+    }
+    .block-attachment a { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: inherit; text-decoration: none; font-size: .7rem; font-weight: 700; }
+    .block-attachment small { color: #8793aa; font-size: .6rem; white-space: nowrap; }
+    .block-attachment button { border: 0; padding: 1px 3px; color: #a33a4c; background: transparent; cursor: pointer; }
+
+    /* Boutons cohérents avec les surfaces Silk */
+    button { -webkit-tap-highlight-color: transparent; }
+    .direct-action {
+      width: 34px; height: 34px; border-radius: 11px; color: #596a8a;
+      box-shadow: 0 4px 12px rgba(46,67,119,.07), inset 0 1px 0 rgba(255,255,255,.95);
+      transition: transform .18s ease, box-shadow .18s ease, color .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .direct-action:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(46,67,119,.12), inset 0 1px 0 #fff; }
+    .direct-action.attach:hover { color: #3567bc; border-color: rgba(70,111,190,.38); background: rgba(235,242,255,.95); }
+    .day-direct-tools button, .direct-bar-btn, .inline-form-actions button, .assistant-compose-actions button, .assistant-preview-actions button, .drive-actions button {
+      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    }
+    .day-direct-tools button:active, .direct-bar-btn:active, .inline-form-actions button:active { transform: translateY(1px) scale(.985); }
+
     /* ── EMPTY STATE ── */
     .empty-state { text-align: center; color: #ccc; padding: 30px 20px; font-size: .88rem; }
 
@@ -712,6 +786,10 @@
       .topbar { padding: 9px 12px; gap: 7px; }
       #week-label { min-width: 120px; font-size: .72rem; }
       .topbar h1 { font-size: .88rem; }
+      .act-time-editor { flex-basis: 72px; width: 72px; }
+      .direct-content-editor { min-width: calc(100% - 98px); }
+      body.edit-mode .direct-block-actions { margin-left: auto; }
+      .subject-picker { padding: 10px; }
     }
 
     /* ── SILK PREMIUM · FUTURISTIC LIGHT ── */
@@ -1222,7 +1300,7 @@
 
 <div id="direct-edit-bar" aria-label="Outils d’édition directe">
   <strong>✏️ Édition directe</strong>
-  <span>Clique sur ✎ dans une activité, ou sur ＋ entre deux blocs.</span>
+  <span>Modifie le texte directement, clique sur la matière ou utilise 📎 pour joindre un fichier.</span>
   <button class="direct-bar-btn" id="direct-export" type="button">💾 Exporter</button>
   <button class="direct-bar-btn" id="direct-import" type="button">📂 Importer</button>
   <button class="direct-bar-btn" id="direct-copy-prev" type="button">📋 Semaine précédente</button>
@@ -1426,6 +1504,7 @@
 <!-- Data layer (fonctions pures + adaptateurs de stockage), sans build,
      compatibles GitHub Pages. Voir ARCHITECTURE.md §5. -->
 <script src="js/journal-schema.js"></script>
+<script src="js/content-formatting.js"></script>
 <script src="js/subject-colors.js"></script>
 <script src="js/data-core.js"></script>
 <script src="js/storage-adapter.js"></script>
@@ -1447,6 +1526,13 @@
 ═══════════════════════════════════════ */
 const DAYS = CJData.DAYS;
 const QUICK_SUBJECTS = ['Rituels','APQ','Dictée','EDL','Calcul Mental','Calcul','Sciences','Anglais','Histoire','Géographie','Lecture','Rédaction','Arts visuels','EPS','Musique','EMC'];
+const SUBJECT_OPTIONS = [
+  'Rituels', 'Français', 'Dictée', 'Étude de la langue', 'Grammaire', 'Conjugaison', 'Orthographe',
+  'Vocabulaire', 'Lecture', 'Littérature', 'Rédaction', "Production d’écrit", 'Poésie', 'Étude du code',
+  'Maths', 'Numération', 'Calcul mental', 'Calcul', 'Résolution de problèmes', 'Géométrie', 'Mesures',
+  'EPS', 'APQ', 'Anglais', 'Histoire', 'Géographie', 'Sciences', 'Technologie',
+  'Arts visuels', 'Musique', 'Histoire des arts', 'EMC', 'Méthodologie', 'Sortie'
+];
 
 function decorateSubjectBadge(element, label) {
   if (!element) return element;
@@ -1464,6 +1550,9 @@ let panelOpen = false;
 let editingIdx = null;   // null = add mode, number = edit mode
 let directEditMode = false;
 let inlineEditor = null; // { mode: 'add'|'edit', day, index?, blockId? }
+let subjectPicker = null; // { day, blockId }
+let pendingFileTarget = null; // null = pièce jointe du jour, sinon activité ciblée
+const directSaveTimers = new Map();
 let allCollapsed = false;
 let dragSrc = null;
 let supabaseClient = null;
@@ -1536,8 +1625,21 @@ function parseContent(text) {
   if (!text || !text.trim()) return '';
 
   const LINK_RE = /\[([^\]]+)\]\(([^)]+)\)/g;
-  const renderLinks = t => t.replace(LINK_RE, (_, label, url) =>
-    `<a href="${url}" target="_blank" rel="noopener">${label}</a>`);
+  const renderFormatting = value => value
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/__([^_]+)__/g, '<u>$1</u>');
+  const renderLinks = value => {
+    let html = '';
+    let lastIndex = 0;
+    let match;
+    const matcher = new RegExp(LINK_RE.source, 'g');
+    while ((match = matcher.exec(value)) !== null) {
+      html += renderFormatting(value.slice(lastIndex, match.index));
+      html += `<a href="${match[2]}" target="_blank" rel="noopener">${renderFormatting(match[1])}</a>`;
+      lastIndex = matcher.lastIndex;
+    }
+    return html + renderFormatting(value.slice(lastIndex));
+  };
 
   // Detect if a line is ONLY links (docs line)
   const isDocsLine = t => {
@@ -2210,6 +2312,7 @@ async function initializeSupabase() {
 function setDirectEditMode(enabled) {
   directEditMode = enabled;
   inlineEditor = null;
+  subjectPicker = null;
   panelOpen = false;
   document.getElementById('edit-panel').classList.remove('open');
   document.getElementById('overlay').classList.remove('visible');
@@ -2244,6 +2347,270 @@ function startInlineEdit(day, blockId) {
 function cancelInlineEdit() {
   inlineEditor = null;
   renderJournal();
+}
+
+function updateDirectBlock(day, blockId, changes) {
+  const result = applyJournalOperations([{
+    type: 'updateBlock', weekKey: weekKey(), day, blockId, changes
+  }], { atomic: true });
+  if (result.errors.length) return false;
+  save();
+  return true;
+}
+
+function subjectOptions() {
+  const labels = new Map();
+  const add = label => {
+    const clean = String(label || '').trim();
+    const key = CJSubjectColors.normalize(clean);
+    if (key && !labels.has(key)) labels.set(key, clean);
+  };
+  SUBJECT_OPTIONS.forEach(add);
+  const weeks = CJSchema.currentWeeks(data);
+  Object.values(weeks || {}).forEach(week => {
+    Object.values(week || {}).forEach(day => {
+      (day && Array.isArray(day.blocks) ? day.blocks : []).forEach(block => {
+        if (block && block.type !== 'break') add(block.tag);
+      });
+    });
+  });
+  return [...labels.values()].sort((left, right) => left.localeCompare(right, 'fr'));
+}
+
+function openSubjectPicker(day, blockId) {
+  subjectPicker = subjectPicker && subjectPicker.day === day && subjectPicker.blockId === blockId
+    ? null
+    : { day, blockId };
+  inlineEditor = null;
+  renderJournal();
+  if (subjectPicker) requestAnimationFrame(() => document.querySelector('.subject-picker-search')?.focus());
+}
+
+function selectDirectSubject(day, block, label) {
+  const tag = String(label || '').trim();
+  if (!tag) return;
+  if (!updateDirectBlock(day, block.id, { tag })) { toast('Matière non enregistrée'); return; }
+  subjectPicker = null;
+  renderJournal();
+  toast(`Matière : ${tag}`);
+}
+
+function createSubjectPicker(day, block) {
+  const picker = document.createElement('div');
+  picker.className = 'subject-picker';
+  picker.addEventListener('click', event => event.stopPropagation());
+
+  const head = document.createElement('div');
+  head.className = 'subject-picker-head';
+  const search = document.createElement('input');
+  search.type = 'search';
+  search.className = 'subject-picker-search';
+  search.placeholder = 'Rechercher ou saisir une matière…';
+  search.setAttribute('aria-label', 'Rechercher une matière');
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'subject-picker-close';
+  close.title = 'Fermer';
+  close.setAttribute('aria-label', 'Fermer la liste des matières');
+  close.textContent = '✕';
+  close.addEventListener('click', () => { subjectPicker = null; renderJournal(); });
+  head.append(search, close);
+
+  const results = document.createElement('div');
+  results.className = 'subject-picker-results';
+  const renderResults = () => {
+    const query = search.value.trim();
+    const normalizedQuery = CJSubjectColors.normalize(query);
+    const matches = subjectOptions().filter(label => !normalizedQuery || CJSubjectColors.normalize(label).includes(normalizedQuery));
+    results.innerHTML = '';
+    const exact = matches.some(label => CJSubjectColors.normalize(label) === normalizedQuery);
+    const choices = query && !exact ? [`Utiliser « ${query} »`, ...matches] : matches;
+    choices.slice(0, 30).forEach((choice, index) => {
+      const custom = query && !exact && index === 0;
+      const label = custom ? query : choice;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'subject-picker-option';
+      button.textContent = choice;
+      decorateSubjectBadge(button, label);
+      button.addEventListener('click', () => selectDirectSubject(day, block, label));
+      results.appendChild(button);
+    });
+    if (!choices.length) {
+      const empty = document.createElement('span');
+      empty.className = 'subject-picker-empty';
+      empty.textContent = 'Aucune matière trouvée.';
+      results.appendChild(empty);
+    }
+  };
+  search.addEventListener('input', renderResults);
+  search.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { event.preventDefault(); subjectPicker = null; renderJournal(); }
+    if (event.key === 'Enter' && search.value.trim()) {
+      event.preventDefault();
+      const first = results.querySelector('button');
+      if (first) first.click();
+    }
+  });
+  renderResults();
+  picker.append(head, results);
+  return picker;
+}
+
+function scheduleDirectContentSave(day, block, textarea, status) {
+  const timerKey = `${weekKey()}:${day}:${block.id}:content`;
+  clearTimeout(directSaveTimers.get(timerKey));
+  status.textContent = 'Modifications…';
+  status.classList.remove('saved');
+  directSaveTimers.set(timerKey, setTimeout(() => {
+    directSaveTimers.delete(timerKey);
+    const saved = updateDirectBlock(day, block.id, { content: textarea.value });
+    if (saved) textarea.dataset.savedValue = textarea.value;
+    status.textContent = saved ? 'Enregistré' : 'Erreur';
+    status.classList.toggle('saved', saved);
+  }, 650));
+}
+
+function commitDirectContent(day, block, textarea, status) {
+  const timerKey = `${weekKey()}:${day}:${block.id}:content`;
+  clearTimeout(directSaveTimers.get(timerKey));
+  directSaveTimers.delete(timerKey);
+  if (textarea.value === textarea.dataset.savedValue) {
+    status.textContent = 'Enregistré';
+    status.classList.add('saved');
+    return;
+  }
+  const saved = updateDirectBlock(day, block.id, { content: textarea.value });
+  if (saved) textarea.dataset.savedValue = textarea.value;
+  status.textContent = saved ? 'Enregistré' : 'Erreur';
+  status.classList.toggle('saved', saved);
+}
+
+function createDirectContentEditor(day, block) {
+  const container = document.createElement('div');
+  container.className = 'act-content direct-content-editor';
+  const toolbar = document.createElement('div');
+  toolbar.className = 'direct-format-toolbar';
+  const status = document.createElement('span');
+  status.className = 'direct-save-status saved';
+  status.textContent = 'Enregistrement automatique';
+  const textarea = document.createElement('textarea');
+  textarea.className = 'direct-content-textarea';
+  textarea.value = block.content || '';
+  textarea.dataset.savedValue = textarea.value;
+  textarea.setAttribute('aria-label', `Contenu de ${block.tag}`);
+
+  const formatButton = (label, text, marker, className = '') => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `format-button ${className}`.trim();
+    button.title = label;
+    button.setAttribute('aria-label', label);
+    button.innerHTML = text;
+    button.addEventListener('mousedown', event => event.preventDefault());
+    button.addEventListener('click', event => {
+      event.preventDefault(); event.stopPropagation();
+      const result = CJFormatting.wrapSelection(textarea.value, textarea.selectionStart, textarea.selectionEnd, marker, 'texte');
+      textarea.value = result.text;
+      textarea.focus();
+      textarea.setSelectionRange(result.selectionStart, result.selectionEnd);
+      autoResize(textarea);
+      scheduleDirectContentSave(day, block, textarea, status);
+    });
+    return button;
+  };
+  toolbar.append(
+    formatButton('Mettre en gras', '<strong>B</strong>', '**'),
+    formatButton('Souligner', 'U', '__', 'underline'),
+    status
+  );
+  textarea.addEventListener('click', event => event.stopPropagation());
+  textarea.addEventListener('input', () => {
+    autoResize(textarea);
+    scheduleDirectContentSave(day, block, textarea, status);
+  });
+  textarea.addEventListener('blur', () => commitDirectContent(day, block, textarea, status));
+  textarea.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault(); commitDirectContent(day, block, textarea, status);
+    }
+  });
+  container.append(toolbar, textarea);
+  requestAnimationFrame(() => autoResize(textarea));
+  appendBlockDocuments(container, block);
+  appendBlockAttachments(container, block, day);
+  return container;
+}
+
+function createDirectTimeEditor(day, block) {
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'act-time-editor';
+  input.value = block.time || '';
+  input.placeholder = 'Horaire';
+  input.setAttribute('aria-label', `Horaire de ${block.tag}`);
+  input.addEventListener('click', event => event.stopPropagation());
+  const commit = () => {
+    if (input.value === (block.time || '')) return;
+    if (!updateDirectBlock(day, block.id, { time: input.value.trim() })) toast('Horaire non enregistré');
+  };
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', event => {
+    if (event.key === 'Enter') { event.preventDefault(); input.blur(); }
+  });
+  return input;
+}
+
+function attachFileToBlock(day, block) {
+  editDay = day;
+  pendingFileTarget = { weekKey: weekKey(), day, blockId: block.id };
+  document.getElementById('file-input').click();
+}
+
+function detachBlockAttachment(day, block, attachment) {
+  if (!confirm(`Retirer « ${attachment.name} » de cette activité ?`)) return;
+  const result = applyJournalOperations([{
+    type: 'detachFile', weekKey: weekKey(), day, blockId: block.id, attachmentId: attachment.id
+  }], { atomic: true });
+  if (result.errors.length) { toast('Retrait impossible'); return; }
+  save(); renderJournal(); toast('Fichier retiré');
+}
+
+function appendBlockAttachments(container, block, day) {
+  const attachments = Array.isArray(block.attachments) ? block.attachments : [];
+  if (!attachments.length) return;
+  const list = document.createElement('div');
+  list.className = 'block-attachments';
+  attachments.forEach(attachment => {
+    const chip = document.createElement('span');
+    chip.className = 'block-attachment';
+    const link = document.createElement('a');
+    link.href = attachment.url;
+    link.target = '_blank';
+    link.download = attachment.name;
+    link.rel = 'noopener';
+    link.textContent = `${fileIcon(attachment.name)} ${attachment.name}`;
+    chip.appendChild(link);
+    if (attachment.size) {
+      const size = document.createElement('small');
+      size.textContent = attachment.size;
+      chip.appendChild(size);
+    }
+    if (directEditMode) {
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.title = 'Retirer ce fichier';
+      remove.setAttribute('aria-label', `Retirer ${attachment.name}`);
+      remove.textContent = '✕';
+      remove.addEventListener('click', event => {
+        event.preventDefault(); event.stopPropagation();
+        detachBlockAttachment(day, block, attachment);
+      });
+      chip.appendChild(remove);
+    }
+    list.appendChild(chip);
+  });
+  container.appendChild(list);
 }
 
 function moveDirectBlock(day, block, toIndex) {
@@ -2289,7 +2656,7 @@ function detachInlineDocument(day, block, associatedDocument) {
 function createDirectAction(label, icon, handler, options = {}) {
   const button = document.createElement('button');
   button.type = 'button';
-  button.className = `direct-action${options.danger ? ' danger' : ''}`;
+  button.className = `direct-action${options.className ? ` ${options.className}` : ''}${options.danger ? ' danger' : ''}`;
   button.title = label;
   button.setAttribute('aria-label', label);
   button.textContent = icon;
@@ -2308,7 +2675,7 @@ function createDirectBlockActions(day, block, index, count) {
   actions.appendChild(createDirectAction('Monter', '↑', () => moveDirectBlock(day, block, index - 1), { disabled: index === 0 }));
   actions.appendChild(createDirectAction('Descendre', '↓', () => moveDirectBlock(day, block, index + 1), { disabled: index === count - 1 }));
   if (block.type !== 'break') {
-    actions.appendChild(createDirectAction(`Modifier ${block.tag}`, '✎', () => startInlineEdit(day, block.id)));
+    actions.appendChild(createDirectAction(`Joindre un fichier à ${block.tag}`, '📎', () => attachFileToBlock(day, block), { className: 'attach' }));
   }
   actions.appendChild(createDirectAction('Supprimer', '🗑', () => deleteDirectBlock(day, block), { danger: true }));
   return actions;
@@ -2430,7 +2797,7 @@ function createInlineActivityForm(day, editor, block) {
     if (!changes.tag) { tag.focus(); return; }
     const operation = editor.mode === 'edit'
       ? { type: 'updateBlock', weekKey: weekKey(), day, blockId: block.id, changes }
-      : { type: 'addBlock', weekKey: weekKey(), day, index: editor.index, block: { type: 'subject', ...changes, documents: [] } };
+      : { type: 'addBlock', weekKey: weekKey(), day, index: editor.index, block: { type: 'subject', ...changes, documents: [], attachments: [] } };
     const result = applyJournalOperations([operation], { atomic: true });
     if (result.errors.length) { toast('Enregistrement impossible'); return; }
     inlineEditor = null;
@@ -2453,7 +2820,11 @@ function createDayDirectTools(day, blockCount) {
   addButton('＋ Activité', 'primary', () => startInlineAdd(day, blockCount));
   addButton('Récréation', 'pause', () => addDirectBreak(day, 'RECREATION', blockCount));
   addButton('Pause midi', 'pause', () => addDirectBreak(day, 'PAUSE MERIDIENNE', blockCount));
-  addButton('📎 Fichier', '', () => { editDay = day; document.getElementById('file-input').click(); });
+  addButton('📎 Fichier', '', () => {
+    editDay = day;
+    pendingFileTarget = null;
+    document.getElementById('file-input').click();
+  });
   addButton('🗑 Vider', 'danger', () => {
     if (!confirm(`Effacer tous les blocs de ${day} ?`)) return;
     getDayData(day).blocks = [];
@@ -2558,18 +2929,42 @@ function renderJournal() {
         } else {
           const row = document.createElement('div');
           row.className = 'act-block';
-          row.innerHTML = `
-            ${block.time ? `<span class="act-time">${block.time}</span>` : ''}
-            <span class="tag">${block.tag}</span>
-            <div class="act-content">${parseContent(block.content)}</div>
-          `;
-          decorateSubjectBadge(row.querySelector('.tag'), block.tag);
-          appendBlockDocuments(row.querySelector('.act-content'), block);
-          if (directEditMode) row.appendChild(createDirectBlockActions(day, block, bi, blocks.length));
-          row.addEventListener('click', event => {
-            if (!directEditMode || event.target.closest('a, button')) return;
-            startInlineEdit(day, block.id);
-          });
+          if (directEditMode) {
+            row.appendChild(createDirectTimeEditor(day, block));
+            const subject = document.createElement('button');
+            subject.type = 'button';
+            subject.className = 'tag subject-picker-trigger';
+            subject.textContent = block.tag;
+            subject.title = 'Changer la matière';
+            subject.setAttribute('aria-label', `Changer la matière ${block.tag}`);
+            decorateSubjectBadge(subject, block.tag);
+            subject.addEventListener('click', event => {
+              event.preventDefault(); event.stopPropagation();
+              openSubjectPicker(day, block.id);
+            });
+            row.append(subject, createDirectContentEditor(day, block));
+            row.appendChild(createDirectBlockActions(day, block, bi, blocks.length));
+            if (subjectPicker && subjectPicker.day === day && subjectPicker.blockId === block.id) {
+              row.appendChild(createSubjectPicker(day, block));
+            }
+          } else {
+            if (block.time) {
+              const time = document.createElement('span');
+              time.className = 'act-time';
+              time.textContent = block.time;
+              row.appendChild(time);
+            }
+            const subject = document.createElement('span');
+            subject.className = 'tag';
+            subject.textContent = block.tag;
+            decorateSubjectBadge(subject, block.tag);
+            const content = document.createElement('div');
+            content.className = 'act-content';
+            content.innerHTML = parseContent(block.content);
+            appendBlockDocuments(content, block);
+            appendBlockAttachments(content, block, day);
+            row.append(subject, content);
+          }
           body.appendChild(row);
         }
       });
@@ -3161,11 +3556,31 @@ document.querySelectorAll('.break-btn').forEach(btn => {
 /* File upload */
 document.getElementById('file-input').addEventListener('change', function() {
   const file = this.files[0];
+  const target = pendingFileTarget;
+  pendingFileTarget = null;
   if (!file) return;
-  if (file.size > 10 * 1024 * 1024) { alert('Fichier trop lourd (max 10 Mo)'); return; }
+  if (file.size > 10 * 1024 * 1024) {
+    this.value = '';
+    alert('Fichier trop lourd (max 10 Mo)');
+    return;
+  }
   const reader = new FileReader();
   reader.onload = e => {
-    getDayData(editDay).attachments.push({ name: file.name, url: e.target.result, size: fmtSize(file.size) });
+    const attachment = {
+      id: CJSchema.createId(),
+      name: file.name,
+      url: e.target.result,
+      size: fmtSize(file.size),
+      mimeType: file.type || 'application/octet-stream'
+    };
+    if (target) {
+      const result = applyJournalOperations([{
+        type: 'attachFile', weekKey: target.weekKey, day: target.day, blockId: target.blockId, attachment
+      }], { atomic: true });
+      if (result.errors.length) { toast('Ajout du fichier impossible'); return; }
+    } else {
+      getDayData(editDay).attachments.push(attachment);
+    }
     save(); renderJournal();
     toast(`"${file.name}" ajouté ✓`);
   };

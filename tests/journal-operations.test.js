@@ -67,6 +67,42 @@ test('association puis retrait d’un document normalisé fonctionnent', () => {
   assert.deepEqual(detached.data.weeks['2026-06-15'].Lundi.blocks[0].documents, []);
 });
 
+test('association puis retrait d’un fichier sur une activité fonctionnent sur une copie', () => {
+  const source = state();
+  const blockId = source.weeks['2026-06-15'].Lundi.blocks[0].id;
+  const attachment = {
+    id: 'piece-1', name: 'consigne.pdf', url: 'data:application/pdf;base64,AAA=', size: '12 Ko', mimeType: 'application/pdf'
+  };
+  const attached = CJOperations.applyOperations(source, [{
+    type: 'attachFile', weekKey: '2026-06-15', day: 'Lundi', blockId, attachment
+  }], { atomic: true });
+  assert.equal(attached.errors.length, 0);
+  assert.deepEqual(attached.data.weeks['2026-06-15'].Lundi.blocks[0].attachments, [attachment]);
+  assert.equal(source.weeks['2026-06-15'].Lundi.blocks[0].attachments, undefined);
+
+  const detached = CJOperations.applyOperations(attached.data, [{
+    type: 'detachFile', weekKey: '2026-06-15', day: 'Lundi', blockId, attachmentId: 'piece-1'
+  }], { atomic: true });
+  assert.equal(detached.errors.length, 0);
+  assert.deepEqual(detached.data.weeks['2026-06-15'].Lundi.blocks[0].attachments, []);
+});
+
+test('un fichier incomplet ou avec une adresse non sécurisée est rejeté atomiquement', () => {
+  const original = state();
+  const originalJson = JSON.stringify(original);
+  const blockId = original.weeks['2026-06-15'].Lundi.blocks[0].id;
+  const result = CJOperations.applyOperations(original, [{
+    type: 'attachFile', weekKey: '2026-06-15', day: 'Lundi', blockId,
+    attachment: { id: 'piece-2', name: 'invalide.pdf', url: 'http://example.test/invalide.pdf' }
+  }], { atomic: true });
+
+  assert.equal(result.acceptedOperations.length, 0);
+  assert.equal(result.rejectedOperations.length, 1);
+  assert.match(result.errors[0].message, /Adresse de pièce jointe invalide/);
+  assert.equal(JSON.stringify(result.data), originalJson);
+  assert.equal(JSON.stringify(original), originalJson);
+});
+
 test('l’édition manuelle de la matière, du contenu et de l’horaire conserve les documents', () => {
   const original = state();
   const blockId = original.weeks['2026-06-15'].Lundi.blocks[0].id;

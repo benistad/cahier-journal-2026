@@ -6,7 +6,10 @@
     root.CJOperations = factory(root.CJSchema);
   }
 })(typeof self !== 'undefined' ? self : this, function (CJSchema) {
-  const OPERATION_TYPES = ['addBlock', 'updateBlock', 'deleteBlock', 'moveBlock', 'attachDocument', 'detachDocument'];
+  const OPERATION_TYPES = [
+    'addBlock', 'updateBlock', 'deleteBlock', 'moveBlock',
+    'attachDocument', 'detachDocument', 'attachFile', 'detachFile'
+  ];
 
   function isPlainObject(value) {
     return Boolean(value && typeof value === 'object' && !Array.isArray(value));
@@ -18,6 +21,15 @@
     const missing = required.find(field => typeof document[field] !== 'string' || !document[field].trim());
     if (missing) return `Champ de document invalide : ${missing}`;
     if (!CJSchema.DOCUMENT_ROLES.includes(document.role)) return `Rôle de document invalide : ${document.role}`;
+    return null;
+  }
+
+  function validateAttachment(attachment) {
+    if (!isPlainObject(attachment)) return 'La pièce jointe doit être un objet';
+    const required = ['id', 'name', 'url'];
+    const missing = required.find(field => typeof attachment[field] !== 'string' || !attachment[field].trim());
+    if (missing) return `Champ de pièce jointe invalide : ${missing}`;
+    if (!attachment.url.startsWith('data:') && !/^https:\/\//i.test(attachment.url)) return 'Adresse de pièce jointe invalide';
     return null;
   }
 
@@ -35,6 +47,13 @@
     for (const document of block.documents) {
       const error = validateDocument(document);
       if (error) return error;
+    }
+    if (block.attachments !== undefined) {
+      if (!Array.isArray(block.attachments)) return 'Le tableau attachments est invalide';
+      for (const attachment of block.attachments) {
+        const error = validateAttachment(attachment);
+        if (error) return error;
+      }
     }
     return null;
   }
@@ -59,6 +78,7 @@
       const block = CJSchema.clone(operation.block);
       if (!block.id) block.id = CJSchema.createId(idFactory);
       if (block.type === 'subject' && block.documents === undefined) block.documents = [];
+      if (block.type === 'subject' && block.attachments === undefined) block.attachments = [];
       const error = validateBlock(block, true);
       if (error) return error;
       if (blocks.some(item => item.id === block.id)) return 'Identifiant de bloc déjà utilisé';
@@ -92,7 +112,26 @@
       blocks[index] = updated;
       return null;
     }
-    if (current.type === 'break') return 'Une pause ne peut pas recevoir de document';
+    if (current.type === 'break') return 'Une pause ne peut pas recevoir de document ou de fichier';
+
+    if (operation.type === 'attachFile') {
+      const attachment = CJSchema.clone(operation.attachment);
+      if (!attachment.id) attachment.id = CJSchema.createId(idFactory);
+      const error = validateAttachment(attachment);
+      if (error) return error;
+      if (!Array.isArray(current.attachments)) current.attachments = [];
+      if (current.attachments.some(item => item.id === attachment.id)) return 'Pièce jointe déjà associée';
+      current.attachments.push(attachment);
+      return null;
+    }
+    if (operation.type === 'detachFile') {
+      if (typeof operation.attachmentId !== 'string' || !operation.attachmentId) return 'Référence de pièce jointe invalide';
+      if (!Array.isArray(current.attachments)) current.attachments = [];
+      const attachmentIndex = current.attachments.findIndex(item => item.id === operation.attachmentId);
+      if (attachmentIndex < 0) return 'Pièce jointe introuvable';
+      current.attachments.splice(attachmentIndex, 1);
+      return null;
+    }
 
     if (operation.type === 'attachDocument') {
       const document = CJSchema.clone(operation.document);
@@ -141,5 +180,5 @@
     return { data: state, acceptedOperations, rejectedOperations, errors };
   }
 
-  return { OPERATION_TYPES, validateDocument, validateBlock, applyOperations };
+  return { OPERATION_TYPES, validateDocument, validateAttachment, validateBlock, applyOperations };
 });
