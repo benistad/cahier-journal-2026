@@ -296,6 +296,56 @@
       padding: 3px 9px; border-radius: 5px; white-space: nowrap;
       flex-shrink: 0; margin-top: 2px;
     }
+    .subject-badge {
+      --subject-bg: rgba(239, 242, 248, .86);
+      --subject-bg-strong: rgba(218, 224, 235, .9);
+      --subject-border: rgba(133, 145, 168, .28);
+      --subject-text: #526078;
+      border-color: var(--subject-border) !important;
+      color: var(--subject-text) !important;
+      background: linear-gradient(135deg, var(--subject-bg), var(--subject-bg-strong)) !important;
+      box-shadow: 0 4px 12px rgba(61, 78, 116, .10), inset 0 1px 0 rgba(255,255,255,.82) !important;
+    }
+    .subject-badge[data-subject-group="francais"] {
+      --subject-bg: rgba(226, 239, 255, .92); --subject-bg-strong: rgba(147, 197, 253, .72);
+      --subject-border: rgba(59, 130, 246, .28); --subject-text: #245799;
+    }
+    .subject-badge[data-subject-group="maths"] {
+      --subject-bg: rgba(255, 231, 236, .94); --subject-bg-strong: rgba(251, 113, 133, .68);
+      --subject-border: rgba(225, 29, 72, .25); --subject-text: #a82143;
+    }
+    .subject-badge[data-subject-group="eps"] {
+      --subject-bg: rgba(255, 235, 237, .94); --subject-bg-strong: rgba(253, 164, 175, .7);
+      --subject-border: rgba(244, 99, 116, .24); --subject-text: #a83b4b;
+    }
+    .subject-badge[data-subject-group="anglais"] {
+      --subject-bg: rgba(248, 239, 255, .94); --subject-bg-strong: rgba(205, 167, 246, .68);
+      --subject-border: rgba(147, 91, 205, .24); --subject-text: #70439b;
+    }
+    .subject-badge[data-subject-group="histoire-geographie"] {
+      --subject-bg: rgba(229, 255, 235, .94); --subject-bg-strong: rgba(90, 222, 119, .62);
+      --subject-border: rgba(22, 163, 74, .24); --subject-text: #24723c;
+    }
+    .subject-badge[data-subject-group="sciences"] {
+      --subject-bg: rgba(226, 252, 255, .94); --subject-bg-strong: rgba(87, 216, 232, .62);
+      --subject-border: rgba(8, 145, 178, .24); --subject-text: #176c7d;
+    }
+    .subject-badge[data-subject-group="arts"] {
+      --subject-bg: rgba(255, 249, 219, .96); --subject-bg-strong: rgba(253, 207, 74, .7);
+      --subject-border: rgba(202, 138, 4, .23); --subject-text: #80620c;
+    }
+    .subject-badge[data-subject-group="musique"] {
+      --subject-bg: rgba(255, 235, 248, .95); --subject-bg-strong: rgba(240, 154, 206, .68);
+      --subject-border: rgba(190, 59, 139, .22); --subject-text: #8e3e70;
+    }
+    .subject-badge[data-subject-group="histoire-arts"] {
+      --subject-bg: rgba(245, 244, 244, .96); --subject-bg-strong: rgba(201, 198, 198, .72);
+      --subject-border: rgba(113, 109, 109, .2); --subject-text: #5e5a5a;
+    }
+    .subject-badge[data-subject-group="emc"] {
+      --subject-bg: rgba(238, 241, 255, .95); --subject-bg-strong: rgba(157, 171, 252, .7);
+      --subject-border: rgba(79, 70, 229, .22); --subject-text: #4d54a2;
+    }
     .act-content { flex: 1; font-size: .88rem; line-height: 1.6; }
     .act-content a { color: var(--link-col); text-decoration: none; }
     .act-content a:hover { text-decoration: underline; }
@@ -512,6 +562,11 @@
       transition: background .15s, transform .1s;
     }
     .quick-chip:hover { background: #fff0a0; transform: translateY(-1px); }
+    .quick-chip.subject-badge:hover,
+    .inline-quick-subjects button.subject-badge:hover {
+      filter: saturate(1.08) brightness(1.02);
+      transform: translateY(-1px);
+    }
     .quick-chip:active { transform: translateY(0); }
 
     /* Upload zone */
@@ -1371,6 +1426,7 @@
 <!-- Data layer (fonctions pures + adaptateurs de stockage), sans build,
      compatibles GitHub Pages. Voir ARCHITECTURE.md §5. -->
 <script src="js/journal-schema.js"></script>
+<script src="js/subject-colors.js"></script>
 <script src="js/data-core.js"></script>
 <script src="js/storage-adapter.js"></script>
 <script src="js/remote-source.js"></script>
@@ -1391,6 +1447,13 @@
 ═══════════════════════════════════════ */
 const DAYS = CJData.DAYS;
 const QUICK_SUBJECTS = ['Rituels','APQ','Dictée','EDL','Calcul Mental','Calcul','Sciences','Anglais','Histoire','Géographie','Lecture','Rédaction','Arts visuels','EPS','Musique','EMC'];
+
+function decorateSubjectBadge(element, label) {
+  if (!element) return element;
+  element.classList.add('subject-badge');
+  element.dataset.subjectGroup = CJSubjectColors.groupFor(label);
+  return element;
+}
 
 const storageAdapter = CJStorage.createLocalStorageAdapter();
 
@@ -1804,6 +1867,7 @@ function renderAssistantPreview(proposal) {
     card.dataset.position = String(index + 1);
     const title = document.createElement('strong');
     title.textContent = `${item.time ? `${item.time} · ` : ''}${item.tag}`;
+    if (item.type !== 'break') decorateSubjectBadge(title, item.tag);
     card.appendChild(title);
     if (item.content) {
       const content = document.createElement('p');
@@ -2312,6 +2376,7 @@ function createInlineActivityForm(day, editor, block) {
     const choice = document.createElement('button');
     choice.type = 'button';
     choice.textContent = subject;
+    decorateSubjectBadge(choice, subject);
     choice.addEventListener('click', () => { tag.value = subject; content.focus(); });
     quick.appendChild(choice);
   });
@@ -2498,6 +2563,7 @@ function renderJournal() {
             <span class="tag">${block.tag}</span>
             <div class="act-content">${parseContent(block.content)}</div>
           `;
+          decorateSubjectBadge(row.querySelector('.tag'), block.tag);
           appendBlockDocuments(row.querySelector('.act-content'), block);
           if (directEditMode) row.appendChild(createDirectBlockActions(day, block, bi, blocks.length));
           row.addEventListener('click', event => {
@@ -2551,6 +2617,7 @@ function renderBlocks() {
     const label = document.createElement('span');
     label.className = block.type === 'break' ? 'b-break' : 'b-tag';
     label.textContent = block.type === 'break' ? block.label : block.tag;
+    if (block.type !== 'break') decorateSubjectBadge(label, block.tag);
     mainHead.appendChild(label);
     if (block.time) {
       const time = document.createElement('span');
@@ -2813,6 +2880,7 @@ function buildQuickChips() {
     const c = document.createElement('button');
     c.className = 'quick-chip';
     c.textContent = s;
+    decorateSubjectBadge(c, s);
     c.addEventListener('click', () => {
       document.getElementById('input-tag').value = s;
       document.getElementById('input-content').focus();
